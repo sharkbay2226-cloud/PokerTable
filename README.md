@@ -1,48 +1,52 @@
 # Poker Diary
 
-Desktop application for tracking poker sessions with licensing, USDT payments, and Telegram bot integration.
+Десктопное приложение для учёта покерных сессий с системой лицензирования, оплатой в USDT и Telegram-ботом.
 
-## Features
+## Возможности
 
-- Track poker sessions, tournaments, and bankroll
-- Dark/light theme
-- Russian/English interface (i18n)
-- Export to Excel (rooms, tournaments, sessions, bankroll)
-- Import/export sessions (JSON)
-- Preset poker rooms
-- Licensing system (14-day trial, yearly/lifetime activation)
-- USDT TRC-20 payments via Telegram bot
+- Учёт сессий, турниров и банкролла
+- Тёмная/светлая тема
+- Русский/английский интерфейс (i18n)
+- Экспорт в Excel (комнаты, турниры, сессии, операции)
+- Импорт/экспорт сессий (JSON)
+- Пресеты покерных комнат
+- Система лицензий (14-дневный триал, годовая/бессрочная активация)
+- Оплата USDT TRC-20 через Telegram бота
 
-## Tech Stack
+## Технологии
 
-- **Frontend**: React 18, TypeScript, Ant Design 5, Vite
-- **Backend**: Node.js JSON API server
-- **Desktop**: Electron, electron-builder (NSIS installer)
-- **Licensing**: Cloudflare Workers + D1, Ed25519 offline activation
-- **Payments**: Telegram Bot (grammy), TRONGrid USDT verification
-- **Database**: sql.js (bot), JSON file (app), D1 (licenses)
+- **Фронтенд**: React 18, TypeScript, Ant Design 5, Vite
+- **Бэкенд**: Node.js JSON API сервер
+- **Десктоп**: Electron, electron-builder (NSIS установщик)
+- **Лицензирование**: Cloudflare Workers + D1, Ed25519 офлайн-активация
+- **Оплата**: Telegram Bot (grammy), TRONGrid USDT верификация
+- **Базы данных**: sql.js (бот), JSON (приложение), D1 (лицензии)
 
-## Development
+## Разработка
 
 ```bash
 npm install
-npm run dev        # browser mode (mock licensing)
-npm run dev:electron  # Electron + Vite hot reload
-npm run build      # build frontend
-npm run build:electron  # build frontend + package EXE
+npm run dev              # режим браузера (мок-лицензирование)
+npm run dev:electron     # Electron + Vite hot reload
+npm run build            # сборка фронтенда
+npm run build:electron   # сборка фронтенда + упаковка EXE
 ```
 
-## Bot
+## Бот
 
-Telegram bot for payments and license management.
+Telegram-бот для оплаты и управления лицензиями: [@PokerDiary_Bot](https://t.me/PokerDiary_Bot)
 
 ```bash
 cd bot
-cp .env.example .env  # fill in your secrets
+cp .env.example .env  # заполнить секреты
 npm install
 node index.js
 ```
 
-## License
+## Готовый установщик
 
-Commercial product. Yearly ($30) and lifetime ($100) licenses available via [@PokerDiary_Bot](https://t.me/PokerDiary_Bot).
+Скачать последнюю версию: https://github.com/sharkbay2226-cloud/PokerTable/releases/latest
+
+## Лицензия
+
+Коммерческий продукт. Годовая ($30) и бессрочная ($100) лицензии доступны через [@PokerDiary_Bot](https://t.me/PokerDiary_Bot).
