@@ -31,7 +31,7 @@ export function startCommand(bot) {
       '/promo CODE — Применить промокод',
       '/ref — Реферальная ссылка',
       '',
-      hasActive ? '✅ У вас есть активная лицензия.' : '❌ Лицензия не найдена.',
+      hasActive ? '✅ У вас есть активная лицензия.' : '💡 Лицензии нет — используйте /buy для покупки.',
     ].join('\n');
 
     await ctx.reply(msg, { parse_mode: 'HTML' });
