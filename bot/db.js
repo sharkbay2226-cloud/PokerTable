@@ -122,7 +122,9 @@ export function createOrder(userId, plan, amountUsd, amountUsdt, walletAddress) 
   exec('INSERT INTO orders (user_id,plan,amount_usd,amount_usdt,wallet_address) VALUES (?,?,?,?,?)', {
     0: userId, 1: plan, 2: amountUsd, 3: amountUsdt, 4: walletAddress,
   });
-  return row('SELECT * FROM orders WHERE id = last_insert_rowid()');
+  const r = db.exec('SELECT MAX(id) as id FROM orders');
+  const maxId = r[0]?.values[0]?.[0];
+  return maxId ? row('SELECT * FROM orders WHERE id = ?', { 0: maxId }) : null;
 }
 
 export function confirmOrder(orderId, txid) {

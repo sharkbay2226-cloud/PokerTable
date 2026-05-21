@@ -43,6 +43,16 @@ async function main() {
   downloadCommand(bot);
 
   await bot.api.setMyCommands([
+    { command: 'start', description: 'Main menu' },
+    { command: 'buy', description: 'Buy Poker Diary license' },
+    { command: 'confirm', description: 'Confirm payment by TXID' },
+    { command: 'activate', description: 'Offline activation (sign a code)' },
+    { command: 'mykey', description: 'Show my license key' },
+    { command: 'promo', description: 'Activate promo code' },
+    { command: 'ref', description: 'Referral program' },
+    { command: 'download', description: 'Download Poker Diary app' },
+  ]);
+  await bot.api.setMyCommands([
     { command: 'start', description: 'Главное меню' },
     { command: 'buy', description: 'Купить лицензию Poker Diary' },
     { command: 'confirm', description: 'Подтвердить оплату по TXID' },
@@ -51,7 +61,7 @@ async function main() {
     { command: 'promo', description: 'Активировать промокод' },
     { command: 'ref', description: 'Реферальная программа' },
     { command: 'download', description: 'Скачать приложение Poker Diary' },
-  ]);
+  ], { language_code: 'ru' });
   console.log('✅ Commands registered');
 
   bot.catch((err) => {
