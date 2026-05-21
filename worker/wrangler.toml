@@ -1,0 +1,13 @@
+name = "poker-diary-license"
+main = "index.js"
+compatibility_date = "2025-01-01"
+workers_dev = true
+
+[[d1_databases]]
+binding = "DB"
+database_name = "poker-diary-license"
+database_id = "4b853f6e-d243-4e25-843b-8aed393e524c"
+
+# API_KEY should be set via `wrangler secret put API_KEY`
+# [vars]
+# API_KEY = "your-secret-key"

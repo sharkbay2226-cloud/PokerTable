@@ -1,0 +1,515 @@
+{
+  "menu": {
+    "bankroll": "Bankroll",
+    "movements": "Movements",
+    "sessions": "Sessions",
+    "tournaments": "Tournaments",
+    "reports": "Reports",
+    "backing": "Backing",
+    "faq": "FAQ"
+  },
+  "header": {
+    "title": "Poker Session Diary"
+  },
+  "sessions": {
+    "page": {
+      "title": "Sessions",
+      "noActive": "No active sessions today",
+      "ended": "{{count}} sessions ended"
+    },
+    "actions": {
+      "start": "Start Tournament",
+      "endDay": "Finish Session"
+    },
+    "table": {
+      "sortDesc": "Click to sort descending",
+      "sortAsc": "Click to sort ascending",
+      "cancelSort": "Cancel sorting",
+      "columns": {
+        "room": "Room",
+        "tournament": "Tournament",
+        "buyIn": "Buy-in",
+        "place": "Place",
+        "inPrize": "In the Money",
+        "backing": "Backing",
+        "prize": "Prize",
+        "bounty": "Bounty"
+      },
+      "filters": {
+        "room": "Room",
+        "tournament": "Tournament",
+        "day": "Day:",
+        "year": "Year",
+        "month": "Month",
+        "dayPlaceholder": "Day",
+        "range": "Range:",
+        "reset": "Reset"
+      },
+      "empty": "No sessions. Click \"Start Tournament\" to add the first one!",
+      "today": "Today",
+      "sessionsFor": "Sessions for",
+      "allSessions": "All Sessions",
+    "total": "Total:",
+    "summary": "Total Summary",
+    "export": {
+      "excel": "Export to Excel",
+      "json": "Export to JSON"
+    },
+      "edit": {
+        "title": "Edit Session",
+        "save": "Save",
+        "cancel": "Cancel",
+        "tournament": "Tournament",
+        "placeLabel": "Place in Tournament",
+        "placeInput": "Your place",
+        "inPrizeLabel": "In the Money",
+        "backingLabel": "Backing",
+        "prizeLabel": "Prize ($)",
+        "prizeInput": "Prize amount",
+        "bountyLabel": "Bounty ($)",
+        "bountyInput": "Bounty amount"
+      },
+      "deleteConfirm": "Delete session?",
+      "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    }
+  },
+  "sessionForm": {
+    "title": "New Tournament",
+    "cancel": "Cancel",
+    "fields": {
+      "date": "Date",
+      "dateRequired": "Please select a date",
+      "room": "Room",
+      "roomRequired": "Please select a room",
+      "roomPlaceholder": "Select a room",
+      "tournament": "Tournament",
+      "tournamentRequired": "Please select a tournament",
+      "tournamentPlaceholder": "Select a tournament",
+      "tournamentWait": "Select a room first",
+      "tournamentNone": "No tournaments for this room"
+    },
+    "info": {
+      "room": "Room:",
+      "tournament": "Tournament:",
+      "buyIn": "Buy-in:",
+      "buyInRub": "Buy-in in RUB:",
+      "backer": "Backer:",
+      "total": "Total:"
+    },
+    "backing": {
+      "label": "Backing",
+      "yes": "Yes",
+      "no": "No",
+      "backerSelect": "Backer"
+    },
+    "save": "Save"
+  },
+  "bankroll": {
+    "page": {
+      "title": "Bankroll",
+      "allRooms": "All Rooms",
+      "noData": "No data"
+    },
+    "rates": {
+      "usdLabel": "USD → RUB:",
+      "eurLabel": "EUR → RUB:",
+      "refresh": "Refresh from internet",
+      "updated": "Rates updated: USD {{usd}} ₽, EUR {{eur}} ₽",
+      "fetchFailed": "Failed to fetch rates",
+      "requestError": "Request error"
+    },
+    "stats": {
+      "total": "Total Bankroll",
+      "profit": "Tournament Profit",
+      "manual": "Manual Operations",
+      "profitLabel": "Profit",
+      "balance": "Balance",
+      "backerPaid": "Backer Paid"
+    },
+    "card": {
+      "deposit": "Deposit to Bankroll",
+      "withdraw": "Withdraw from Bankroll",
+      "depositBtn": "Deposit",
+      "withdrawBtn": "Withdraw",
+      "cancel": "Cancel",
+      "room": "Room:",
+      "currency": "Currency",
+      "usd": "Dollar ($)",
+      "eur": "Euro (€)",
+      "rub": "Ruble (₽)",
+      "amount": "Amount",
+      "comment": "Comment",
+      "commentPlaceholder": "e.g. card deposit"
+    }
+  },
+  "movements": {
+    "page": {
+      "title": "Movements",
+      "empty": "No records"
+    },
+    "filters": {
+      "from": "From",
+      "to": "To",
+      "room": "Room",
+      "type": "Type"
+    },
+    "types": {
+      "all": "All types",
+      "win": "Win",
+      "loss": "Loss",
+      "deposit": "Deposit",
+      "withdrawal": "Withdrawal"
+    },
+    "sort": {
+      "newest": "Newest first",
+      "oldest": "Oldest first"
+    },
+    "summary": {
+      "wins": "Wins",
+      "losses": "Losses",
+      "deposits": "Deposits",
+      "withdrawals": "Withdrawals"
+    }
+  },
+  "tournaments": {
+    "page": {
+      "title": "Tournament Management",
+      "addRoom": "Add Room",
+      "noRooms": "No rooms. Add the first room!",
+      "addTournament": "Add Tournament",
+      "back": "Back"
+    },
+    "tabs": {
+      "rooms": "Rooms",
+      "tournaments": "Tournaments"
+    },
+    "columns": {
+      "name": "Name",
+      "buyIn": "Buy-in",
+      "tournamentCount": "Tournaments"
+    },
+    "roomModal": {
+      "editTitle": "Edit Room",
+      "newTitle": "New Room",
+      "nameLabel": "Name",
+      "nameRequired": "Enter a room name",
+      "nameDuplicate": "A room with this name already exists",
+      "namePlaceholder": "e.g. PokerStars",
+      "save": "Save",
+      "add": "Add"
+    },
+    "tournamentModal": {
+      "editTitle": "Edit Tournament",
+      "newTitle": "New Tournament",
+      "nameLabel": "Tournament Name",
+      "nameRequired": "Enter a name",
+      "nameDuplicate": "A tournament with this name already exists in this room",
+      "namePlaceholder": "e.g. Bounty Hunters $5.40",
+      "roomLabel": "Room",
+      "roomRequired": "Select a room",
+      "roomPlaceholder": "Select a room",
+      "buyInLabel": "Buy-in",
+      "buyInRequired": "Enter buy-in",
+      "currencyLabel": "Currency",
+      "currencyRequired": "Select currency",
+      "save": "Save",
+      "add": "Add"
+    },
+    "presetRooms": {
+      "quickSelect": "Quick add from popular rooms",
+      "selectPlaceholder": "Select a popular room",
+      "tournaments": "Tournaments to add",
+      "orCustom": "or create your own"
+    },
+    "delete": {
+      "roomConfirm": "Delete room and all tournaments?",
+      "tournamentConfirm": "Delete tournament?"
+    },
+    "empty": "No tournaments for \"{{room}}\". Click \"Add Tournament\"!",
+    "count": "{{count}} tournaments",
+    "sortDesc": "Click to sort descending",
+    "sortAsc": "Click to sort ascending",
+    "cancelSort": "Cancel sorting"
+  },
+  "backing": {
+    "page": {
+      "title": "Backing",
+      "noBackers": "No backers",
+      "deleteConfirm": "Delete backer?"
+    },
+    "sections": {
+      "backers": "Backers",
+      "distribution": "Distribution",
+      "byRoom": "By Room",
+      "history": "Payment History"
+    },
+    "stats": {
+      "totalBuyIns": "Total Buy-ins",
+      "totalProfit": "Total Profit",
+      "received": "Received",
+      "paid": "Paid",
+      "fromBackers": "from backers",
+      "alreadyPaid": "already paid",
+      "paidByBacker": "paid by backer",
+      "remainingToPay": "Remaining to Pay",
+      "remainingAfterPayments": "remaining after payments",
+      "playerShare": "Player (You)",
+      "remainingProfit": "remaining profit",
+      "totalDebt": "Total Debt",
+      "debtFormula": "share + received"
+    },
+    "columns": {
+      "room": "Room",
+      "buyIns": "Buy-ins",
+      "profit": "Profit",
+      "backerShare": "Backer Share",
+      "received": "Received",
+      "paid": "Paid",
+      "comment": "Comment"
+    },
+    "actions": {
+      "receive": "Receive",
+      "pay": "Pay Backer",
+      "payout": "Payout from Own Funds",
+      "addBacker": "Add",
+      "receiveTitle": "Receive from Backer — {{room}}",
+      "payTitle": "Pay Backer — {{room}}",
+      "payoutTitle": "Payout from Own Funds",
+      "receiveBtn": "Receive",
+      "payBtn": "Pay",
+      "payoutBtn": "Pay",
+      "cancel": "Cancel",
+      "receiveInfo": "Funds will be added to {{room}} balance and shown in Movements",
+      "payInfo": "Funds will be deducted from {{room}} balance and shown in Movements"
+    },
+    "backerModal": {
+      "editTitle": "Edit Backer",
+      "addTitle": "Add Backer",
+      "nameLabel": "Backer Name",
+      "namePlaceholder": "Name",
+      "nameRequired": "Enter a name",
+      "percentLabel": "Percent",
+      "percentInvalid": "Percent must be 1-100",
+      "save": "Save",
+      "add": "Add",
+      "cancel": "Cancel"
+    },
+    "editModal": {
+      "title": "Edit Entry",
+      "save": "Save",
+      "cancel": "Cancel"
+    },
+    "history": {
+      "roomFilter": "All Rooms",
+      "noOps": "No operations",
+      "deleteConfirm": "Delete entry?",
+      "paidByBacker": "Paid by Backer",
+      "typePayment": "Payment",
+      "typeReceipt": "Receipt"
+    },
+    "fields": {
+      "backer": "Backer",
+      "amount": "Amount ({{currency}})",
+      "date": "Date",
+      "currency": "Currency",
+      "room": "Room:",
+      "usd": "Dollar ($)",
+      "eur": "Euro (€)",
+      "rub": "Ruble (₽)"
+    },
+    "messages": {
+      "received": "Received {{amount}} from backer ({{room}})",
+      "receiveError": "Error receiving funds",
+      "paid": "Paid {{amount}} to backer ({{room}})",
+      "payError": "Error paying backer",
+      "payoutSuccess": "Payout {{amount}} from own funds",
+      "payoutError": "Payout error",
+      "deleted": "Entry deleted",
+      "deleteError": "Delete error",
+      "updated": "Entry updated",
+      "updateError": "Update error"
+    },
+    "info": {
+      "negativeProfit": "Negative profit — backer share reduces total debt"
+    }
+  },
+  "reports": {
+    "page": {
+      "title": "Reports"
+    },
+    "filters": {
+      "allRooms": "All Rooms"
+    },
+    "currencies": {
+      "rub": "₽ Rubles",
+      "usd": "$ Dollars",
+      "eur": "€ Euros"
+    },
+    "stats": {
+      "totalProfit": "Total Profit",
+      "totalWon": "Total Won",
+      "sessionsPlayed": "Tournaments Played",
+      "avgBuyIn": "Avg Buy-in",
+      "bestRoom": "Best Room"
+    },
+    "charts": {
+      "top3Wins": "Top 3 Wins",
+      "profitByRoom": "Profit by Room",
+      "profitByTournament": "Profit by Tournament",
+      "allTournaments": "All Tournaments",
+      "bankroll": "Bankroll (Cumulative)",
+      "expenses": "Expenses"
+    },
+    "expenses": {
+      "allTournaments": "All Tournaments",
+      "sessionsPlayed": "Tournaments Played",
+      "buyInCost": "Buy-in Cost",
+      "showWorst": "Show Top-10 Worst",
+      "hideWorst": "Hide",
+      "worstTitle": "Top-10 Worst",
+      "buyIn": "Buy-in",
+      "profit": "Profit",
+      "played": "Played",
+      "cost": "Cost"
+    },
+    "tooltips": {
+      "gamesPlayed": "Games Played",
+      "tournaments": "Tournaments",
+      "profit": "Profit"
+    },
+    "axes": {
+      "gamesCount": "Games Played",
+      "profitRub": "Profit (₽)",
+      "profitUsd": "Profit ($)",
+      "profitEur": "Profit (€)",
+      "tournaments": "Tournaments",
+      "bankroll": "Bankroll"
+    }
+  },
+  "faq": {
+    "page": {
+      "title": "FAQ — How It Works"
+    },
+    "room": {
+      "label": "🏠 Room — What Is It?",
+      "content": "A room is a poker platform (PokerStars, GG Poker, CoinPoker, etc.). All tournaments are grouped by room. You can add, edit and delete rooms on the «Tournaments» page."
+    },
+    "tournament": {
+      "label": "🏆 Tournament — How to Add?",
+      "content": "On the «Tournaments» page, select a room and click «Add Tournament». Enter the name, buy-in and currency. Once created, the tournament will appear in the list available for a new session."
+    },
+    "session": {
+      "label": "🎮 Game Session — What Is It?",
+      "content": "A session is one played tournament. On the «Sessions» page, click «Start Tournament», select a room and tournament, specify a backer (if any) and save. After saving, the session appears in the table with column sorting and pagination (20 rows by default). You can edit fields (backing, place, prize, bounty) directly in the table row."
+    },
+    "finish": {
+      "label": "✅ Finish Session — Why?",
+      "content": "If you started a tournament but didn't fill in the result — click «Finish Session». All unfinished sessions for today will be marked as played without winnings and removed from the «Today» block. You can find them using the calendar by selecting that date."
+    },
+    "bankroll": {
+      "label": "💰 Bankroll — How It Works",
+      "content": "Bankroll automatically calculates the balance for each room: tournament profit + manual operations. You can deposit (+) or withdraw (-) funds in any currency (USD/EUR/RUB). Exchange rates can be edited manually or fetched from the internet (refresh button). Each room can have its display currency (USD/EUR/RUB) using buttons at the bottom of the card. «Backer paid» operations don't affect room balance — they only appear in history."
+    },
+    "reports": {
+      "label": "📊 Reports — What's There?",
+      "intro": "The «Reports» page contains charts and statistics:",
+      "list": {
+        "profitByRoom": "Profit by Room",
+        "profitByRoomDesc": "pie chart",
+        "profitByTournament": "Profit by Tournament",
+        "profitByTournamentDesc": "bar chart (profit per tournament)",
+        "bankroll": "Bankroll",
+        "bankrollDesc": "cumulative line chart",
+        "expenses": "Expenses",
+        "expensesDesc": "statistics: tournaments played, total buy-ins, total won, top-10 worst tournaments"
+      },
+      "footer": "At the top you can select the display currency and filter by room or tournament."
+    },
+    "currencies": {
+      "label": "💱 Currencies — How to Configure?",
+      "content": "The app supports three currencies: USD, EUR, RUB. All amounts are stored in USD in the database. Exchange rates are set on the «Bankroll» page. You can enter them manually or click the refresh button to fetch current rates from exchangerate-api.com. Rates are saved in localStorage and persist on reload. For each room you can select a display currency (USD/EUR/RUB) — balance will be shown in RUB and EUR at current rates while the base value stays in USD."
+    },
+    "backing": {
+      "label": "🧑‍💼 Backing — How It Works",
+      "intro": "On the «Backing» page you can manage backers (investors) who fund your tournaments.",
+      "list": {
+        "add": "Adding Backers",
+        "addDesc": "specify a name and profit percentage. You can add multiple backers with different percentages.",
+        "link": "Linking to Sessions",
+        "linkDesc": "when creating a session, select a backer (if there are several). If there's only one backer, they are selected automatically.",
+        "ops": "Operations",
+        "opsDesc": "\"Receive\" (backer sent money), \"Pay\" (you send money to backer), \"Payout from own funds\" (backer paid tournament directly — doesn't affect room balance).",
+        "debt": "Debt",
+        "debtDesc": "automatically calculated: backer share + received - paid - paid by backer.",
+        "history": "History",
+        "historyDesc": "all operations with filters by room and date, with edit and delete capabilities."
+      }
+    },
+    "movements": {
+      "label": "🔄 Movements — What Is It?",
+      "intro": "The «Movements» page shows all financial operations in chronological order:",
+      "list": {
+        "wins": "Wins and Losses",
+        "winsDesc": "tournament results (all currencies are converted to USD)",
+        "manual": "Deposits and Withdrawals",
+        "manualDesc": "manual bankroll operations"
+      },
+      "footer": "Filtering is available by room, operation type, date, and sorting (newest/oldest first). Pagination — 20 records per page."
+    },
+    "backup": {
+      "label": "🗄 Backup",
+      "desc1": "All data is stored in the <code>server/db.json</code> file in the project folder. As long as the server is running (<code>node server/index.js</code>), the app reads and writes data to this file. You can open it in any text editor, copy it, commit to git, or replace it.",
+      "desc2": "On each startup, the app automatically duplicates data to the browser's localStorage as a fallback. Below you can download a full dump or restore data from a .json file.",
+      "desc3": "The server must be running. It is recommended to launch via <code>Start.bat</code> — it starts the server + frontend with a single command and opens the browser. Alternatively, manually: <code>npm run dev</code>. Without the server, the page will load but data won't be available."
+    },
+    "buttons": {
+      "downloadBackup": "Download backup (.json)",
+      "exportExcel": "Export to Excel",
+      "restore": "Restore from .json",
+      "clearSessions": "Clear All Sessions"
+    },
+    "messages": {
+      "exported": "Data exported",
+      "imported": "Data imported. Reload the page.",
+      "importError": "Import error. Check the file.",
+      "excelExported": "Data exported to Excel",
+      "excelError": "Error exporting to Excel",
+      "clearSuccess": "Sessions and bankroll operations cleared"
+    },
+    "clearModal": {
+      "title": "Clear all sessions and operations?",
+      "content": "All game sessions and bankroll operations will be deleted. Manual data and tournaments will remain.",
+      "okText": "Clear",
+      "cancelText": "Cancel"
+    }
+  },
+  "license": {
+    "activateTitle": "Activate Poker Diary",
+    "activateSubtitle": "Enter your license key to access the application",
+    "trialExpired": "Trial period has expired",
+    "trialDaysLeft": "{{days}} days of trial remaining",
+    "graceMessage": "License expired but still within 7-day grace period for renewal",
+    "onlineTab": "Online Activation",
+    "offlineTab": "Offline Activation",
+    "onlineDesc": "Enter the key you received after payment via Telegram bot @PokerDiary_Bot",
+    "offlineDesc": "Get a challenge code, send it to the Telegram bot, enter the response",
+    "keyPlaceholder": "XXXXX-XXXXX-XXXXX-XXXXX",
+    "activateBtn": "Activate",
+    "buyBtn": "Buy License",
+    "enterKeyBtn": "Enter Key",
+    "getChallengeBtn": "Get Challenge Code",
+    "copyChallengeBtn": "Copy Code",
+    "challengeHint": "Send this code to @PokerDiary_Bot using the /activate command",
+    "responsePlaceholder": "Enter bot response",
+    "verifyBtn": "Verify & Activate",
+    "activated": "License activated!",
+    "activationFailed": "Activation failed",
+    "activationError": "An error occurred. Please try again.",
+    "serverUnreachable": "Server unreachable. Use offline activation.",
+    "challengeError": "Failed to get challenge code",
+    "copied": "Copied!",
+    "errorTitle": "License Check Error",
+    "errorSubtitle": "Failed to check license status",
+    "retry": "Retry"
+  }
+}

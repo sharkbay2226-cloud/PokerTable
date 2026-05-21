@@ -1,0 +1,303 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Glassmorphism utility */
+.glass {
+  background: rgba(255, 255, 255, 0.05);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* Ant Design overrides for dark theme */
+.theme-dark .ant-card {
+  border-color: #334155 !important;
+}
+
+.theme-dark .ant-table {
+  background: transparent !important;
+}
+
+.theme-dark .ant-table-thead > tr > th {
+  background: #0f172a !important;
+  border-bottom: 1px solid #334155 !important;
+}
+
+.theme-dark .ant-table-tbody > tr > td {
+  border-bottom: 1px solid #334155 !important;
+}
+
+.theme-dark .ant-table-tbody > tr:hover > td {
+  background: #1e293b !important;
+}
+
+.theme-dark .ant-statistic-title {
+  color: #94a3b8 !important;
+}
+
+.theme-dark .ant-card-head {
+  border-bottom: 1px solid #334155 !important;
+}
+
+.theme-dark ::-webkit-scrollbar-track {
+  background: #1e293b;
+}
+
+.theme-dark ::-webkit-scrollbar-thumb {
+  background: #334155;
+  border-radius: 4px;
+}
+
+.theme-dark ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Light theme scrollbar */
+.theme-light ::-webkit-scrollbar-track {
+  background: #f1f5f9;
+}
+
+.theme-light ::-webkit-scrollbar-thumb {
+  background: #94a3b8;
+  border-radius: 4px;
+}
+
+.theme-light ::-webkit-scrollbar-thumb:hover {
+  background: #64748b;
+}
+
+/* Light theme — override all hardcoded dark inline styles */
+.theme-light .ant-card {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+.theme-light .ant-card-head {
+  border-bottom: 1px solid #e2e8f0 !important;
+}
+
+.theme-light .ant-card-head-title,
+.theme-light .ant-card-extra {
+  color: #1a1a1a !important;
+}
+
+.theme-light .ant-statistic-title {
+  color: #4a5568 !important;
+}
+
+.theme-light .ant-statistic-content {
+  color: #1a1a1a !important;
+}
+
+.theme-light .ant-table {
+  background: #ffffff !important;
+}
+
+.theme-light .ant-table-thead > tr > th {
+  background: #f8fafc !important;
+  border-bottom: 1px solid #e2e8f0 !important;
+  color: #1a1a1a !important;
+}
+
+.theme-light .ant-table-tbody > tr > td {
+  border-bottom: 1px solid #e2e8f0 !important;
+  color: #1a1a1a !important;
+}
+
+.theme-light .ant-table-tbody > tr:hover > td {
+  background: #f1f5f9 !important;
+}
+
+.theme-light .ant-collapse {
+  background: #ffffff !important;
+}
+
+.theme-light .ant-collapse-header {
+  color: #1a1a1a !important;
+}
+
+.theme-light .ant-collapse-content {
+  background: #ffffff !important;
+  color: #1a1a1a !important;
+}
+
+.theme-light .ant-collapse-content-box {
+  color: #1a1a1a !important;
+}
+
+.theme-light .ant-select {
+  color: #1a1a1a !important;
+}
+
+.theme-light .ant-picker {
+  background: #ffffff !important;
+}
+
+.theme-light .ant-btn-default {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+  color: #1a1a1a !important;
+}
+
+.theme-light .ant-input-number {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+.theme-light .ant-input-number-input {
+  color: #1a1a1a !important;
+}
+
+.theme-light .ant-modal-content {
+  background: #ffffff !important;
+}
+
+.theme-light .ant-modal-header {
+  background: #ffffff !important;
+}
+
+.theme-light .ant-modal-title {
+  color: #1a1a1a !important;
+}
+
+.theme-light .ant-tag {
+  color: #1a1a1a !important;
+}
+
+.theme-light .ant-typography {
+  color: #1a1a1a !important;
+}
+
+.theme-light h1.ant-typography,
+.theme-light h2.ant-typography,
+.theme-light h3.ant-typography,
+.theme-light h4.ant-typography,
+.theme-light h5.ant-typography {
+  color: #1a1a1a !important;
+}
+
+.theme-light .ant-alert {
+  color: #1a1a1a !important;
+}
+
+.theme-light .ant-popover-inner {
+  background: #ffffff !important;
+}
+
+.theme-light .ant-popover-title {
+  color: #1a1a1a !important;
+}
+
+.theme-light .ant-popover-inner-content {
+  color: #1a1a1a !important;
+}
+
+.theme-light .ant-divider {
+  border-color: #e2e8f0 !important;
+}
+
+.theme-light code {
+  background: #f1f5f9 !important;
+  color: #1a1a1a !important;
+}
+
+.theme-light .ant-menu-inline {
+  border-right: none !important;
+}
+
+/* Light sidebar overrides */
+.theme-light .ant-layout-sider {
+  box-shadow: 1px 0 8px rgba(0, 0, 0, 0.04) !important;
+}
+
+.theme-light .ant-menu-light {
+  background: transparent !important;
+}
+
+.theme-light .top-wins-section {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+.theme-light .top-win-card {
+  background: #ffffff !important;
+  border-color: #e2e8f0 !important;
+}
+
+.theme-light .top-win-name {
+  color: #1a1a1a !important;
+}
+
+.theme-light .ant-menu-item {
+  color: #475569 !important;
+}
+
+.theme-light .ant-menu-item-selected {
+  color: #3b82f6 !important;
+  background: rgba(59, 130, 246, 0.08) !important;
+}
+
+.theme-light .ant-menu-item:hover {
+  color: #3b82f6 !important;
+}
+
+.theme-light .ant-menu-item-active {
+  background: rgba(59, 130, 246, 0.06) !important;
+}
+
+.theme-light .ant-layout-sider-trigger {
+  background: #f1f5f9 !important;
+  color: #64748b !important;
+  border-right: 1px solid #e2e8f0;
+}
+
+/* Filter bars (SessionTable) */
+.theme-light .filter-bar {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.theme-light .filter-label {
+  color: #4a5568 !important;
+}
+
+/* Stat cards (Charts expenses) */
+.theme-light .stat-card {
+  background: #ffffff !important;
+  border: 1px solid #e2e8f0 !important;
+}
+
+.theme-light .stat-card .ant-card-body > span {
+  color: #4a5568 !important;
+}
+
+.theme-light .stat-card .ant-card-body > div {
+  color: #1a1a1a !important;
+}

@@ -1,0 +1,39 @@
+appId: com.pokerdiary.app
+productName: Poker Diary
+copyright: Copyright © 2026
+
+directories:
+  output: release
+  buildResources: build
+
+files:
+  - dist/**/*
+  - server/**/*
+  - electron/**/*
+  - package.json
+
+win:
+  target:
+    - target: nsis
+      arch:
+        - x64
+  icon: build/icon.ico
+
+nsis:
+  oneClick: false
+  perMachine: false
+  allowToChangeInstallationDirectory: true
+  deleteAppDataOnUninstall: false
+  createDesktopShortcut: true
+  createStartMenuShortcut: true
+  shortcutName: Poker Diary
+
+extraMetadata:
+  main: electron/main.cjs
+
+asar: false
+
+publish:
+  provider: github
+  owner: sharkbay2226-cloud
+  repo: PokerTable

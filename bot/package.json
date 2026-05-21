@@ -1,0 +1,15 @@
+{
+  "name": "poker-diary-bot",
+  "private": true,
+  "version": "1.0.0",
+  "type": "module",
+  "scripts": {
+    "start": "node index.js",
+    "dev": "node --watch index.js"
+  },
+  "dependencies": {
+    "dotenv": "^16.4.7",
+    "grammy": "^1.34.1",
+    "sql.js": "^1.11.0"
+  }
+}

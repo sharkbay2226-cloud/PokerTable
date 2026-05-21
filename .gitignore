@@ -1,0 +1,29 @@
+node_modules/
+dist/
+release/
+*.exe
+*.blockmap
+*.db
+.env
+server/data/*.json
+bot/bot.db
+.DS_Store
+Thumbs.db
+*.log
+*.tsbuildinfo
+worker/.wrangler/
+server/start-server.bat
+
+# Internal docs (not for public)
+Plan.md
+Progress.md
+Links.md
+
+# Dev helpers
+Start.bat
+Start.ps1
+bot/StartBot.bat
+server/start-server.bat
+
+# Seed data
+src/db/seed_data.json
