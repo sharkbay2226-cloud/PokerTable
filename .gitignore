@@ -5,6 +5,7 @@ release/
 *.blockmap
 *.db
 .env
+server/*.json
 server/data/*.json
 bot/bot.db
 .DS_Store

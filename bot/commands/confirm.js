@@ -72,7 +72,7 @@ export function confirmCommand(bot) {
           `📅 <b>Тариф:</b> ${plan === 'yearly' ? 'Годовая (до ' + expiresAt.slice(0, 10) + ')' : 'Бессрочная'}`,
           '',
           '📥 <b>Скачать приложение:</b>',
-          '<a href="https://github.com/sharkbay2226-cloud/PokerTable/releases/latest">Poker Diary для Windows</a>',
+          '<a href="http://sharkbqo.beget.tech/Poker-Diary-Setup-0.1.1.exe">Poker Diary Setup 0.1.1</a>',
           '',
           '📋 Введите ключ в приложении:',
           '   Menu → Ввести ключ → Онлайн-активация',
