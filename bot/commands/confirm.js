@@ -1,6 +1,7 @@
 import { confirmOrder, addLicense, row } from '../db.js';
 import { createLicense } from '../worker.js';
 import { verifyTransaction } from '../trongrid.js';
+import { notifyAdmins } from '../notify.js';
 
 export function confirmCommand(bot) {
   bot.command('confirm', async (ctx) => {
@@ -80,6 +81,14 @@ export function confirmCommand(bot) {
         ].join('\n'),
         { parse_mode: 'HTML' }
       );
+
+      const name = ctx.from.first_name || ctx.from.username || ctx.from.id;
+      notifyAdmins(bot, `💰 <b>Оплата подтверждена!</b>
+🧾 <b>Заказ #${order.id}</b>
+👤 ${name} | @${ctx.from.username || '—'}
+💎 ${plan === 'yearly' ? 'Годовая' : 'Бессрочная'} | $${order.amount_usdt}
+🔑 <code>${licenseKey}</code>
+📅 ${new Date().toLocaleString('ru-RU')}`);
     } catch (e) {
       await ctx.reply(`❌ Ошибка создания лицензии: ${e.message}. Обратитесь к администратору.`);
     }

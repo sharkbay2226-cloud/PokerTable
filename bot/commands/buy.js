@@ -1,4 +1,5 @@
 import { createOrder, expirePendingOrders } from '../db.js';
+import { notifyAdmins } from '../notify.js';
 
 const PRICE_YEARLY = parseFloat(process.env.PRICE_YEARLY || '30');
 const PRICE_LIFETIME = parseFloat(process.env.PRICE_LIFETIME || '100');
@@ -69,6 +70,12 @@ export function buyCommand(bot) {
 
       await ctx.editMessageText(msg, { parse_mode: 'HTML', reply_markup: { inline_keyboard: [] } });
       await ctx.answerCallbackQuery();
+
+      const name = ctx.from.first_name || ctx.from.username || ctx.from.id;
+      notifyAdmins(bot, `🆕 <b>Новый заказ #${order.id}</b>
+👤 ${name} | @${ctx.from.username || '—'}
+💎 ${plan === 'yearly' ? 'Годовая' : 'Бессрочная'} | $${amountUsd}
+📅 ${new Date().toLocaleString('ru-RU')}`);
     } catch (e) {
       await ctx.answerCallbackQuery('❌ Ошибка при создании заказа');
     }
