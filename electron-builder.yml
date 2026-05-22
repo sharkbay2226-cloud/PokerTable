@@ -31,7 +31,9 @@ nsis:
 extraMetadata:
   main: electron/main.cjs
 
-asar: false
+asar: true
+asarUnpack:
+  - server/**
 
 publish:
   provider: github

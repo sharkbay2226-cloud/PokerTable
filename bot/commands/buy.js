@@ -1,9 +1,12 @@
 import { createOrder, expirePendingOrders } from '../db.js';
 import { notifyAdmins } from '../notify.js';
 
-const PRICE_YEARLY = parseFloat(process.env.PRICE_YEARLY || '30');
-const PRICE_LIFETIME = parseFloat(process.env.PRICE_LIFETIME || '100');
+const PRICE_MONTHLY = parseFloat(process.env.PRICE_MONTHLY || '5');
+const PRICE_YEARLY = parseFloat(process.env.PRICE_YEARLY || '25');
+const PRICE_LIFETIME = parseFloat(process.env.PRICE_LIFETIME || '50');
 const WALLET = process.env.USDT_WALLET || '';
+
+const PLAN_NAMES = { monthly: 'Месячная', yearly: 'Годовая', lifetime: 'Бессрочная' };
 
 export function buyCommand(bot) {
   bot.command('buy', async (ctx) => {
@@ -19,6 +22,7 @@ export function buyCommand(bot) {
       '',
       'Оплата в <b>USDT (TRC-20)</b> с любого кошелька.',
       '',
+      `📆 <b>Месячная</b> — $${PRICE_MONTHLY}`,
       `📅 <b>Годовая</b> — $${PRICE_YEARLY}`,
       `♾️ <b>Бессрочная</b> — $${PRICE_LIFETIME}`,
       '',
@@ -28,16 +32,9 @@ export function buyCommand(bot) {
     const kb = {
       reply_markup: {
         inline_keyboard: [
-          [
-            {
-              text: `📅 Годовая — $${PRICE_YEARLY}`,
-              callback_data: `buy:yearly:${PRICE_YEARLY}`,
-            },
-            {
-              text: `♾️ Бессрочная — $${PRICE_LIFETIME}`,
-              callback_data: `buy:lifetime:${PRICE_LIFETIME}`,
-            },
-          ],
+          [{ text: `📆 Месячная — $${PRICE_MONTHLY}`, callback_data: `buy:monthly:${PRICE_MONTHLY}` }],
+          [{ text: `📅 Годовая — $${PRICE_YEARLY}`, callback_data: `buy:yearly:${PRICE_YEARLY}` }],
+          [{ text: `♾️ Бессрочная — $${PRICE_LIFETIME}`, callback_data: `buy:lifetime:${PRICE_LIFETIME}` }],
         ],
       },
     };
@@ -45,7 +42,7 @@ export function buyCommand(bot) {
     await ctx.reply(msg, { parse_mode: 'HTML', ...kb });
   });
 
-  bot.callbackQuery(/^buy:(yearly|lifetime):([\d.]+)$/, async (ctx) => {
+  bot.callbackQuery(/^buy:(monthly|yearly|lifetime):([\d.]+)$/, async (ctx) => {
     try {
       const plan = ctx.match[1];
       const amountUsd = parseFloat(ctx.match[2]);
@@ -57,7 +54,7 @@ export function buyCommand(bot) {
         '✅ <b>Заказ создан!</b>',
         '',
         `📋 <b>ID заказа:</b> #${order.id}`,
-        `💎 <b>Тариф:</b> ${plan === 'yearly' ? 'Годовая' : 'Бессрочная'}`,
+        `💎 <b>Тариф:</b> ${PLAN_NAMES[plan]}`,
         `💵 <b>Сумма:</b> $${amountUsd} USDT (TRC-20)`,
         `📍 <b>Кошелёк:</b> <code>${WALLET}</code>`,
         '',
@@ -74,7 +71,7 @@ export function buyCommand(bot) {
       const name = ctx.from.first_name || ctx.from.username || ctx.from.id;
       notifyAdmins(bot, `🆕 <b>Новый заказ #${order.id}</b>
 👤 ${name} | @${ctx.from.username || '—'}
-💎 ${plan === 'yearly' ? 'Годовая' : 'Бессрочная'} | $${amountUsd}
+💎 ${PLAN_NAMES[plan]} | $${amountUsd}
 📅 ${new Date().toLocaleString('ru-RU')}`);
     } catch (e) {
       await ctx.answerCallbackQuery('❌ Ошибка при создании заказа');

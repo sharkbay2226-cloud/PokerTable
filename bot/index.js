@@ -10,6 +10,7 @@ import { mykeyCommand } from './commands/mykey.js';
 import { promoCommand } from './commands/promo.js';
 import { refCommand } from './commands/ref.js';
 import { downloadCommand } from './commands/download.js';
+import { adminCommand } from './commands/admin.js';
 
 async function main() {
   const BOT_TOKEN = process.env.BOT_TOKEN;
@@ -41,6 +42,7 @@ async function main() {
   promoCommand(bot);
   refCommand(bot);
   downloadCommand(bot);
+  adminCommand(bot);
 
   await bot.api.setMyCommands([
     { command: 'start', description: 'Main menu' },

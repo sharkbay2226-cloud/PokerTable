@@ -55,16 +55,16 @@ export async function initDb() {
   )`);
   db.run(`CREATE TABLE IF NOT EXISTS orders (
     id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL,
-    plan TEXT NOT NULL CHECK(plan IN ('yearly','lifetime')),
+    plan TEXT NOT NULL CHECK(plan IN ('monthly','yearly','lifetime')),
     amount_usd REAL NOT NULL, amount_usdt REAL NOT NULL,
-    wallet_address TEXT NOT NULL, txid TEXT,
+    wallet_address TEXT NOT NULL, txid TEXT, promo_code TEXT,
     status TEXT NOT NULL DEFAULT 'pending' CHECK(status IN ('pending','confirmed','expired','refunded')),
     license_key TEXT, expires_at TEXT,
     created_at TEXT DEFAULT (datetime('now')), confirmed_at TEXT
   )`);
   db.run(`CREATE TABLE IF NOT EXISTS licenses (
     id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL,
-    key TEXT UNIQUE NOT NULL, plan TEXT NOT NULL CHECK(plan IN ('yearly','lifetime')),
+    key TEXT UNIQUE NOT NULL, plan TEXT NOT NULL CHECK(plan IN ('monthly','yearly','lifetime')),
     status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','revoked','expired')),
     expires_at TEXT NOT NULL, created_at TEXT DEFAULT (datetime('now'))
   )`);
@@ -118,9 +118,9 @@ export function getOrCreateUser(telegramUser, referrerId) {
   return row('SELECT * FROM users WHERE id = ?', { 0: telegramUser.id });
 }
 
-export function createOrder(userId, plan, amountUsd, amountUsdt, walletAddress) {
-  exec('INSERT INTO orders (user_id,plan,amount_usd,amount_usdt,wallet_address) VALUES (?,?,?,?,?)', {
-    0: userId, 1: plan, 2: amountUsd, 3: amountUsdt, 4: walletAddress,
+export function createOrder(userId, plan, amountUsd, amountUsdt, walletAddress, promoCode) {
+  exec('INSERT INTO orders (user_id,plan,amount_usd,amount_usdt,wallet_address,promo_code) VALUES (?,?,?,?,?,?)', {
+    0: userId, 1: plan, 2: amountUsd, 3: amountUsdt, 4: walletAddress, 5: promoCode || null,
   });
   const r = db.exec('SELECT MAX(id) as id FROM orders');
   const maxId = r[0]?.values[0]?.[0];
@@ -171,4 +171,22 @@ export function getReferralStats(userId) {
   const total = row('SELECT COUNT(*) as c FROM referrals WHERE referrer_id=? AND status="paid"', { 0: userId });
   const pending = row('SELECT COUNT(*) as c FROM referrals WHERE referrer_id=? AND status="pending"', { 0: userId });
   return { total: total?.c || 0, pending: pending?.c || 0 };
+}
+
+export function createPromoCode(code, discount, maxUses, expiresAt) {
+  exec('INSERT OR REPLACE INTO promo_codes (code,discount_percent,max_uses,expires_at) VALUES (?,?,?,?)', {
+    0: code, 1: discount, 2: maxUses, 3: expiresAt || null,
+  });
+}
+
+export function deletePromoCode(code) {
+  exec('DELETE FROM promo_codes WHERE code=?', { 0: code });
+}
+
+export function getAllPromoCodes() {
+  return rows('SELECT * FROM promo_codes ORDER BY created_at DESC');
+}
+
+export function getAllOrders() {
+  return rows('SELECT o.*, u.username FROM orders o LEFT JOIN users u ON o.user_id=u.id ORDER BY o.created_at DESC');
 }

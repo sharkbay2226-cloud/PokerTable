@@ -11,4 +11,6 @@ contextBridge.exposeInMainWorld('licenseAPI', {
   getOfflineChallenge: () => ipcRenderer.invoke('license:getOfflineChallenge'),
   verifyOfflineResponse: (resp) => ipcRenderer.invoke('license:verifyOfflineResponse', resp),
   openPurchase: () => ipcRenderer.invoke('license:openPurchase'),
+  revalidate: () => ipcRenderer.invoke('license:revalidate'),
+  onRevoked: (cb) => ipcRenderer.on('license:revoked', (_e, status) => cb(status)),
 });

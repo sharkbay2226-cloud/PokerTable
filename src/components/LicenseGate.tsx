@@ -36,7 +36,16 @@ export default function LicenseGate({ children }: { children: ReactNode }) {
     }
   }, []);
 
-  useEffect(() => { checkStatus(); }, [checkStatus]);
+  useEffect(() => {
+    checkStatus();
+    const api = window.licenseAPI || mockLicenseAPI;
+    if (api.onRevoked) {
+      api.onRevoked((status) => {
+        setStatusData(status);
+        setGateStatus('expired');
+      });
+    }
+  }, [checkStatus]);
 
   if (gateStatus === 'loading') {
     return (

@@ -29,6 +29,8 @@ interface LicenseAPI {
   getOfflineChallenge: () => Promise<string>;
   verifyOfflineResponse: (response: string) => Promise<ActivateResult>;
   openPurchase: () => void;
+  revalidate?: () => Promise<LicenseStatus>;
+  onRevoked?: (cb: (status: LicenseStatus) => void) => void;
 }
 
 interface Window {

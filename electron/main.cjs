@@ -5,6 +5,7 @@ const { autoUpdater } = require('electron-updater');
 const license = require('./license.cjs');
 
 let serverProcess = null;
+let revalidateTimer = null;
 const isDev = !app.isPackaged;
 
 function startServer() {
@@ -13,8 +14,8 @@ function startServer() {
     env: { ...process.env, API_PORT: '3001' },
     stdio: 'pipe',
   });
-  serverProcess.stdout?.on('data', (d) => process.stdout.write(`[server] ${d}`));
-  serverProcess.stderr?.on('data', (d) => process.stderr.write(`[server] ${d}`));
+  serverProcess.stdout?.on('data', (d) => process.stdout.write('[server] ' + d));
+  serverProcess.stderr?.on('data', (d) => process.stderr.write('[server] ' + d));
 }
 
 function createWindow() {
@@ -37,19 +38,31 @@ function createWindow() {
   } else {
     win.loadFile(path.join(__dirname, '..', 'dist', 'index.html'));
   }
+
+  startRevalidation(win);
 }
 
-// ── Auto-updater ──
+function startRevalidation(win) {
+  const CHECK_MS = 60 * 60 * 1000;
+  revalidateTimer = setInterval(async () => {
+    await license.revalidateIfNeeded();
+    const status = license.getLicenseStatus();
+    if (status.status === 'expired' && status.reason !== 'trial_ended' && status.reason !== 'license_expired') {
+      win.webContents.send('license:revoked', status);
+    }
+  }, CHECK_MS);
+}
+
 autoUpdater.autoDownload = false;
 autoUpdater.autoInstallOnAppQuit = true;
 
 autoUpdater.on('update-available', (info) => {
   dialog.showMessageBox({
     type: 'info',
-    title: 'Доступно обновление',
-    message: `Версия ${info.version} доступна для скачивания.`,
-    detail: 'Обновление будет установлено при выходе из приложения.',
-    buttons: ['ОК'],
+    title: 'Update available',
+    message: 'Version ' + info.version + ' is available.',
+    detail: 'Update will be installed on exit.',
+    buttons: ['OK'],
   });
 });
 
@@ -57,7 +70,6 @@ autoUpdater.on('error', (err) => {
   console.error('[autoUpdater]', err.message);
 });
 
-// ── License IPC handlers ──
 ipcMain.handle('license:getStatus', () => {
   return license.getLicenseStatus();
 });
@@ -78,6 +90,11 @@ ipcMain.handle('license:openPurchase', () => {
   shell.openExternal('https://t.me/PokerDiary_Bot');
 });
 
+ipcMain.handle('license:revalidate', async () => {
+  await license.revalidateIfNeeded();
+  return license.getLicenseStatus();
+});
+
 app.whenReady().then(() => {
   startServer();
   createWindow();
@@ -90,10 +107,12 @@ app.whenReady().then(() => {
 });
 
 app.on('window-all-closed', () => {
+  if (revalidateTimer) { clearInterval(revalidateTimer); revalidateTimer = null; }
   if (serverProcess) { serverProcess.kill(); serverProcess = null; }
   if (process.platform !== 'darwin') app.quit();
 });
 
 app.on('before-quit', () => {
+  if (revalidateTimer) { clearInterval(revalidateTimer); revalidateTimer = null; }
   if (serverProcess) { serverProcess.kill(); serverProcess = null; }
 });

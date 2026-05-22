@@ -91,4 +91,12 @@ export const mockLicenseAPI: LicenseAPI = {
   openPurchase() {
     alert('Открыть Telegram-бота @PokerDiary_Bot для покупки');
   },
+
+  async revalidate() {
+    return this.getStatus();
+  },
+
+  onRevoked(_cb: (status: LicenseStatus) => void) {
+    // no-op in dev
+  },
 };

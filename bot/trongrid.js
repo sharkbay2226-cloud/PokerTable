@@ -5,9 +5,11 @@ const USDT_CONTRACT = 'TR7NHqjeKQxGTCi8q8ZY4pL8otSzgjLj6t';
 const USDT_CONTRACT_HEX = '41a614f803b6fd780986a42c78ec9c7f77e6ded13c';
 
 let walletHex = '';
+let walletBase58 = '';
 
 export function setWalletAddress(base58Address) {
   try {
+    walletBase58 = base58Address;
     walletHex = addressToHex(base58Address);
     return true;
   } catch {
@@ -55,5 +57,44 @@ export async function verifyTransaction(txid, expectedAmount) {
     return { valid: false, reason: 'no_matching_transfer' };
   } catch (e) {
     return { valid: false, reason: `error: ${e.message}` };
+  }
+}
+
+export async function getIncomingTransfers(minTimestamp) {
+  if (!walletHex) throw new Error('Wallet address not configured');
+
+  const params = new URLSearchParams({
+    only_to: 'true',
+    only_confirmed: 'true',
+    limit: '200',
+    min_timestamp: String(minTimestamp),
+  });
+
+  try {
+    const res = await fetch(`${TRONGRID_URL}/v1/accounts/${walletBase58}/transactions/trc20?${params}`, {
+      headers: process.env.TRONGRID_API_KEY
+        ? { 'TRON-PRO-API-KEY': process.env.TRONGRID_API_KEY }
+        : {},
+      signal: AbortSignal.timeout(20000),
+    });
+
+    if (!res.ok) return [];
+
+    const data = await res.json();
+    if (!data.data || !Array.isArray(data.data)) return [];
+
+    return data.data
+      .filter(tx => tx.to && tx.token_info?.symbol === 'USDT')
+      .map(tx => ({
+        txid: tx.transaction_id,
+        from: tx.from,
+        to: tx.to,
+        value: parseFloat(tx.value || '0'),
+        token: tx.token_info?.symbol || 'USDT',
+        timestamp: tx.block_timestamp,
+      }))
+      .filter(tx => tx.value > 0);
+  } catch {
+    return [];
   }
 }

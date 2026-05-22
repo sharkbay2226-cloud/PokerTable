@@ -56,7 +56,11 @@ export function confirmCommand(bot) {
     const plan = order.plan;
     const expiresAt = plan === 'lifetime'
       ? '2099-12-31T23:59:59Z'
-      : new Date(Date.now() + 366 * 86400000).toISOString();
+      : plan === 'monthly'
+        ? new Date(Date.now() + 30 * 86400000).toISOString()
+        : new Date(Date.now() + 366 * 86400000).toISOString();
+
+    const PLAN_NAMES = { monthly: 'Месячная', yearly: 'Годовая', lifetime: 'Бессрочная' };
 
     try {
       await createLicense(licenseKey, plan, expiresAt);
@@ -69,10 +73,11 @@ export function confirmCommand(bot) {
           `🔑 <b>Ваш лицензионный ключ:</b>`,
           `<code>${licenseKey}</code>`,
           '',
-          `📅 <b>Тариф:</b> ${plan === 'yearly' ? 'Годовая (до ' + expiresAt.slice(0, 10) + ')' : 'Бессрочная'}`,
+          `📅 <b>Тариф:</b> ${plan === 'lifetime' ? 'Бессрочная' : `${PLAN_NAMES[plan]} (до ${expiresAt.slice(0, 10)})`}`,
           '',
           '📥 <b>Скачать приложение:</b>',
-          '<a href="http://sharkbqo.beget.tech/Poker-Diary-Setup-0.1.1.exe">Poker Diary Setup 0.1.1</a>',
+          '<a href="http://sharkbqo.beget.tech/Poker%20Diary%20Setup%200.1.3.exe">Poker Diary Setup 0.1.3</a> (хостинг)',
+          '<a href="https://github.com/sharkbay2226-cloud/PokerTable/releases/latest">GitHub Releases</a>',
           '',
           '📋 Введите ключ в приложении:',
           '   Menu → Ввести ключ → Онлайн-активация',
@@ -86,7 +91,7 @@ export function confirmCommand(bot) {
       notifyAdmins(bot, `💰 <b>Оплата подтверждена!</b>
 🧾 <b>Заказ #${order.id}</b>
 👤 ${name} | @${ctx.from.username || '—'}
-💎 ${plan === 'yearly' ? 'Годовая' : 'Бессрочная'} | $${order.amount_usdt}
+💎 ${PLAN_NAMES[plan]} | $${order.amount_usdt}
 🔑 <code>${licenseKey}</code>
 📅 ${new Date().toLocaleString('ru-RU')}`);
     } catch (e) {
