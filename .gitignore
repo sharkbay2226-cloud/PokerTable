@@ -36,3 +36,7 @@ promo_result.json
 
 # Generated reports
 bot/report.html
+
+# Local dev instructions
+DEV_SETUP.md
+INSTRUCTIONS.md

@@ -1,56 +1,31 @@
-import { getAllRooms, getAllSessions } from './db';
-import type { Session, Tournament, Room } from '../types';
-import seedData from './seed_data.json';
+import { getAllRooms, getAllSessions, getAllTournaments, getAllBankrollEntries } from './db';
 
-interface SeedData {
-  rooms: Room[];
-  tournaments: Tournament[];
-  sessions: Session[];
-}
+const SEED_DONE_KEY = 'poker-diary-seed-done';
 
 export async function seedDatabase() {
-  try {
-    const data = seedData as SeedData;
-    const roomCount = (await getAllRooms()).length;
+  if (localStorage.getItem(SEED_DONE_KEY)) return;
 
-    if (roomCount > 0) {
-      const sessions = await getAllSessions();
-      if (sessions.length > 0) {
-        const hasOldFields = 'bountyCount' in sessions[0] || !('inPrize' in sessions[0]);
-        if (hasOldFields) {
-          console.log('Clearing old schema data and re-seeding...');
-          await fetch('/api/seed', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ rooms: [], tournaments: [], sessions: [], bankroll: [] }),
-          });
-        } else {
-          console.log('Database has data, skipping seed');
-          return;
-        }
-      } else {
-        return;
-      }
+  try {
+    const [rooms, tournaments, sessions, bankroll] = await Promise.all([
+      getAllRooms(),
+      getAllTournaments(),
+      getAllSessions(),
+      getAllBankrollEntries(),
+    ]);
+
+    if (rooms.length > 0 || tournaments.length > 0 || sessions.length > 0 || bankroll.length > 0) {
+      try { localStorage.setItem(SEED_DONE_KEY, '1'); } catch {}
+      return;
     }
 
-    console.log('Seeding database...');
+    const { default: seedData } = await import('./seed_data.json');
     await fetch('/api/seed', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(data),
+      body: JSON.stringify(seedData),
     });
-    console.log(`Seeded ${data.rooms.length} rooms, ${data.tournaments.length} tournaments, ${data.sessions.length} sessions`);
-  } catch (err) {
-    console.error('Seed error, clearing and retrying...', err);
-    try {
-      await fetch('/api/seed', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(seedData),
-      });
-      console.log('Database re-seeded successfully after error!');
-    } catch (e) {
-      console.error('Fatal seed error:', e);
-    }
+    try { localStorage.setItem(SEED_DONE_KEY, '1'); } catch {}
+  } catch {
+    // seed is best-effort, ignore failures
   }
 }

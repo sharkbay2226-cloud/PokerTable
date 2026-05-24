@@ -59,9 +59,13 @@ export default function FaqPage() {
       okType: 'danger',
       cancelText: t('faq.clearModal.cancelText'),
       onOk: async () => {
-        await clearAllSessions();
-        message.success(t('faq.messages.clearSuccess'));
-        setTimeout(() => window.location.reload(), 1000);
+        try {
+          await clearAllSessions();
+          message.success(t('faq.messages.clearSuccess'));
+          setTimeout(() => window.location.reload(), 1000);
+        } catch {
+          message.error(t('faq.messages.clearError'));
+        }
       },
     });
   };

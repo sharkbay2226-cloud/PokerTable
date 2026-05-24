@@ -1,4 +1,4 @@
-import type { Room, Tournament, Session, BankrollEntry } from '../types';
+import type { Room, Tournament, Session, BankrollEntry, TrainingItem } from '../types';
 
 const API = window.electronAPI?.apiBase ?? '/api';
 
@@ -133,4 +133,22 @@ export async function importAllData(json: string): Promise<void> {
     body: JSON.stringify(data),
   });
   if (!res.ok) throw new Error('Failed to import data');
+}
+
+export async function loadTrainingData(): Promise<TrainingItem[]> {
+  const res = await fetch(`${API}/training`);
+  if (!res.ok) throw new Error('Failed to load training data');
+  return res.json();
+}
+
+export async function saveTrainingData(items: TrainingItem[]): Promise<void> {
+  const res = await fetch(`${API}/training`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(items),
+  });
+  if (!res.ok) {
+    const text = await res.text().catch(() => '');
+    throw new Error(`Status ${res.status}: ${text}`);
+  }
 }

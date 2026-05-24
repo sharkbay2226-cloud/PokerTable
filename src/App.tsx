@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { HashRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Layout, Menu, ConfigProvider, theme, Typography, Tour, Button, Tooltip, Space, Modal } from 'antd';
-import { QuestionCircleOutlined, DatabaseOutlined, BarChartOutlined, TrophyOutlined, WalletOutlined, SwapOutlined, TeamOutlined, SunOutlined, MoonOutlined, GlobalOutlined } from '@ant-design/icons';
+import { QuestionCircleOutlined, DatabaseOutlined, BarChartOutlined, TrophyOutlined, WalletOutlined, SwapOutlined, TeamOutlined, SunOutlined, MoonOutlined, GlobalOutlined, ExperimentOutlined } from '@ant-design/icons';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from './store/appStore';
 import i18n from './i18n/i18n';
@@ -13,6 +13,8 @@ import BankrollPage from './pages/BankrollPage';
 import MovementsPage from './pages/MovementsPage';
 import FaqPage from './pages/FaqPage';
 import BackingPage from './pages/BackingPage';
+import TrainingPage from './pages/TrainingPage';
+
 
 const scrollStyles = `
   html { scroll-behavior: smooth; }
@@ -73,7 +75,7 @@ function AppLayout() {
       description: isEn
         ? 'Use the sidebar to navigate between sections. Each item opens a different page. Click any item to jump to that section.'
         : 'Используйте боковое меню для перехода между разделами. Каждый пункт открывает свою страницу. Нажмите на любой пункт, чтобы перейти в раздел.',
-      target: () => siderRef.current?.querySelector('.ant-menu'),
+      target: () => siderRef.current?.querySelector('.ant-menu') || siderRef.current,
     },
     {
       title: isEn ? '📋 Sessions' : '📋 Игровые сессии',
@@ -133,6 +135,7 @@ function AppLayout() {
     { key: '/tournaments', icon: <TrophyOutlined />, label: t('menu.tournaments') },
     { key: '/reports', icon: <BarChartOutlined />, label: t('menu.reports') },
     { key: '/backing', icon: <TeamOutlined />, label: t('menu.backing') },
+    { key: '/training', icon: <ExperimentOutlined />, label: t('menu.training') },
     { key: '/faq', icon: <QuestionCircleOutlined />, label: t('menu.faq') },
   ];
 
@@ -328,6 +331,7 @@ function AppLayout() {
             <Content ref={contentRef} style={{ padding: 24, background: lo.contentBg, minHeight: 280 }}>
               <Routes>
                 <Route path="/backing" element={<BackingPage />} />
+                <Route path="/training" element={<TrainingPage />} />
                 <Route path="/faq" element={<FaqPage />} />
                 <Route path="/movements" element={<MovementsPage />} />
                 <Route path="/" element={<SessionsPage />} />
@@ -344,7 +348,9 @@ function AppLayout() {
           steps={tourSteps as any}
           onChange={(current) => {
             const pages: Record<number, string> = { 2: '/', 3: '/bankroll', 4: '/movements', 5: '/tournaments', 6: '/reports', 7: '/backing', 8: '/faq' };
-            if (pages[current]) navigate(pages[current]);
+            if (pages[current]) {
+              setTimeout(() => navigate(pages[current]!), 0);
+            }
           }}
           mask
           type="primary"

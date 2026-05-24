@@ -6,7 +6,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const DB_PATH = join(__dirname, 'db.json');
 
-const DEFAULT_DATA = { rooms: [], tournaments: [], sessions: [], bankroll: [] };
+const DEFAULT_DATA = { rooms: [], tournaments: [], sessions: [], bankroll: [], training: [] };
 
 function readDb() {
   if (!existsSync(DB_PATH)) {
@@ -69,6 +69,23 @@ async function handler(req, res) {
   }
 
   const { parts } = parseUrl(req.url);
+
+  // GET /api/training
+  if (req.method === 'GET' && parts[0] === 'training') {
+    const db = readDb();
+    send(res, 200, db.training || []);
+    return;
+  }
+
+  // POST /api/training
+  if (req.method === 'POST' && parts[0] === 'training') {
+    const body = await parseBody(req);
+    const db = readDb();
+    db.training = body;
+    writeDb(db);
+    send(res, 200, { ok: true });
+    return;
+  }
 
   // POST /api/seed
   if (req.method === 'POST' && parts[0] === 'seed') {
