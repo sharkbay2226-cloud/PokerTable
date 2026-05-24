@@ -120,8 +120,8 @@ export default function FaqPage() {
 
   return (
     <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center' }}>
-      <Title level={3} style={{ marginBottom: 24 }}>
-        <InfoCircleOutlined /> {t('faq.page.title')}
+      <Title level={3} style={{ marginBottom: 24, color: '#d4a843' }}>
+        <InfoCircleOutlined style={{ color: '#d4a843' }} /> {t('faq.page.title')}
       </Title>
 
       <Collapse
@@ -132,7 +132,7 @@ export default function FaqPage() {
         items={[
           {
             key: '1',
-            label: <Space><HomeOutlined />{t('faq.room.label')}</Space>,
+            label: <Space style={{ color: '#d4a843' }}><HomeOutlined />{t('faq.room.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.room.content')}
@@ -141,7 +141,7 @@ export default function FaqPage() {
           },
           {
             key: '2',
-            label: <Space><TrophyOutlined />{t('faq.tournament.label')}</Space>,
+            label: <Space style={{ color: '#d4a843' }}><TrophyOutlined />{t('faq.tournament.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.tournament.content')}
@@ -150,7 +150,7 @@ export default function FaqPage() {
           },
           {
             key: '3',
-            label: <Space><PlayCircleOutlined />{t('faq.session.label')}</Space>,
+            label: <Space style={{ color: '#d4a843' }}><PlayCircleOutlined />{t('faq.session.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.session.content')}
@@ -159,7 +159,7 @@ export default function FaqPage() {
           },
           {
             key: '4',
-            label: <Space><CheckCircleOutlined />{t('faq.finish.label')}</Space>,
+            label: <Space style={{ color: '#d4a843' }}><CheckCircleOutlined />{t('faq.finish.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.finish.content')}
@@ -168,7 +168,7 @@ export default function FaqPage() {
           },
           {
             key: '5',
-            label: <Space><WalletOutlined />{t('faq.bankroll.label')}</Space>,
+            label: <Space style={{ color: '#d4a843' }}><WalletOutlined />{t('faq.bankroll.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.bankroll.content')}
@@ -177,7 +177,7 @@ export default function FaqPage() {
           },
           {
             key: '6',
-            label: <Space><BarChartOutlined />{t('faq.reports.label')}</Space>,
+            label: <Space style={{ color: '#d4a843' }}><BarChartOutlined />{t('faq.reports.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.reports.intro')}
@@ -193,7 +193,7 @@ export default function FaqPage() {
           },
           {
             key: '7',
-            label: <Space><DollarOutlined />{t('faq.currencies.label')}</Space>,
+            label: <Space style={{ color: '#d4a843' }}><DollarOutlined />{t('faq.currencies.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.currencies.content')}
@@ -202,7 +202,7 @@ export default function FaqPage() {
           },
           {
             key: '9',
-            label: <Space><TeamOutlined />{t('faq.backing.label')}</Space>,
+            label: <Space style={{ color: '#d4a843' }}><TeamOutlined />{t('faq.backing.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.backing.intro')}
@@ -218,7 +218,7 @@ export default function FaqPage() {
           },
           {
             key: '10',
-            label: <Space><SwapOutlined />{t('faq.movements.label')}</Space>,
+            label: <Space style={{ color: '#d4a843' }}><SwapOutlined />{t('faq.movements.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.movements.intro')}
@@ -232,7 +232,7 @@ export default function FaqPage() {
           },
           {
             key: '11',
-            label: <Space><ExperimentOutlined />{t('faq.training.label')}</Space>,
+            label: <Space style={{ color: '#d4a843' }}><ExperimentOutlined />{t('faq.training.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.training.content')}
@@ -241,7 +241,7 @@ export default function FaqPage() {
           },
           {
             key: '8',
-            label: <Space><DatabaseOutlined />{t('faq.backup.label')}</Space>,
+            label: <Space style={{ color: '#d4a843' }}><DatabaseOutlined />{t('faq.backup.label')}</Space>,
             children: (
               <div style={{ textAlign: 'center' }}>
                 <Paragraph>

@@ -216,7 +216,7 @@ export default function TournamentsPage() {
                     .sort((a, b) => a.name.localeCompare(b.name));
                   return tours.length > 0 ? (
                     <>
-                      <Text strong style={{ color: '#3b82f6', fontSize: 16, display: 'block', marginBottom: 12 }}>
+                      <Text strong style={{ color: '#d4a843', fontSize: 16, display: 'block', marginBottom: 12 }}>
                         {t('tournaments.roomCount', { room: room?.name, count: tours.length })}
                       </Text>
                       <Table
@@ -279,7 +279,7 @@ export default function TournamentsPage() {
             <div style={{ padding: 12, background: 'rgba(59, 130, 246, 0.08)', border: '1px solid rgba(59, 130, 246, 0.2)', borderRadius: 8, marginBottom: 4 }}>
               <Space direction="vertical" style={{ width: '100%' }}>
                 <Text style={{ fontSize: 12, display: 'flex', alignItems: 'center', gap: 4, color: '#3b82f6' }}>
-                  <StarOutlined style={{ color: '#f59e0b' }} /> {t('tournaments.presetRooms.quickSelect')}
+                  <StarOutlined style={{ color: '#d4a843' }} /> {t('tournaments.presetRooms.quickSelect')}
                 </Text>
                 <Select
                   style={{ width: '100%' }}

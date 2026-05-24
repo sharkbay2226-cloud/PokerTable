@@ -160,7 +160,7 @@ export default function TrainingPage() {
 
   return (
     <div>
-      <Title level={3} style={{ marginBottom: 16 }}>{t('training.title')}</Title>
+      <Title level={3} style={{ marginBottom: 24 }}>{t('training.title')}</Title>
 
       <Tabs
         activeKey={tab}

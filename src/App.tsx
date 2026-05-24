@@ -221,12 +221,13 @@ function AppLayout() {
               borderInlineEnd: 'none',
             }}
           >
-            <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
               <div style={{
                 height: 56,
                 display: 'flex',
                 alignItems: 'center',
-                justifyContent: 'center',
+                paddingLeft: collapsed ? 0 : 24,
+                justifyContent: collapsed ? 'center' : 'flex-start',
                 background: 'transparent',
               }}>
                 <Title level={4} style={{ color: '#d4a843', margin: 0, fontSize: collapsed ? 14 : 18, whiteSpace: 'nowrap', fontFamily: "'Inter', sans-serif" }}>
@@ -243,6 +244,7 @@ function AppLayout() {
                   background: 'transparent',
                   borderInlineEnd: 'none',
                   flex: 1,
+                  paddingTop: collapsed ? 0 : 20,
                 }}
               />
               <div style={{
