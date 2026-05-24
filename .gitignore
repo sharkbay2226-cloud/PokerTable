@@ -62,3 +62,6 @@ bot/data/
 *.temp
 desktop.ini
 .vscode/settings.json
+
+# Local opencode config (contains tokens)
+.opencode/

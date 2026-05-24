@@ -259,7 +259,9 @@
       "playerShare": "Игрок (вы)",
       "remainingProfit": "оставшийся профит",
       "totalDebt": "Общий долг",
-      "debtFormula": "доля + получено"
+      "debtFormula": "доля + получено",
+      "percentOfProfit": "{{percent}}% от профита",
+      "negativeProfit": "Отрицательный профит — доля бэкера не начисляется"
     },
     "columns": {
       "room": "Рум",

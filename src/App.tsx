@@ -2,11 +2,13 @@ import { useState, useRef, useEffect } from 'react';
 import { HashRouter, Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 import { Layout, Menu, ConfigProvider, theme, Typography, Tour, Button, Tooltip, Space, Modal } from 'antd';
 import { QuestionCircleOutlined, DatabaseOutlined, BarChartOutlined, TrophyOutlined, WalletOutlined, SwapOutlined, TeamOutlined, SunOutlined, MoonOutlined, GlobalOutlined, ExperimentOutlined } from '@ant-design/icons';
+import { motion, AnimatePresence } from 'framer-motion';
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from './store/appStore';
 import i18n from './i18n/i18n';
 const APP_VERSION = '0.1.4';
 import LicenseGate from './components/LicenseGate';
+import CustomCursor from './components/CustomCursor';
 import SessionsPage from './pages/SessionsPage';
 import ReportsPage from './pages/ReportsPage';
 import TournamentsPage from './pages/TournamentsPage';
@@ -16,12 +18,6 @@ import FaqPage from './pages/FaqPage';
 import BackingPage from './pages/BackingPage';
 import TrainingPage from './pages/TrainingPage';
 
-
-const scrollStyles = `
-  html { scroll-behavior: smooth; }
-  .ant-collapse-item { transition: all 0.3s ease; }
-  .ant-collapse-content { transition: all 0.4s ease-in-out !important; }
-`;
 
 const { Sider, Content, Header } = Layout;
 const { Title } = Typography;
@@ -140,27 +136,10 @@ function AppLayout() {
     { key: '/faq', icon: <QuestionCircleOutlined />, label: t('menu.faq') },
   ];
 
-  const darkLayout = {
-    siderBg: '#1e293b',
-    siderBorder: '#334155',
-    headerBg: '#1e293b',
-    headerBorder: '#334155',
-    headerColor: '#e2e8f0',
-    contentBg: '#0f172a',
-    borderColor: '#334155',
+  const lo = {
+    headerColor: isDark ? '#e8eaed' : '#1a1a1a',
+    accent: '#d4a843',
   };
-
-  const lightLayout = {
-    siderBg: '#f8fafc',
-    siderBorder: '#e2e8f0',
-    headerBg: '#ffffff',
-    headerBorder: '#e2e8f0',
-    headerColor: '#1a1a1a',
-    contentBg: '#f5f7fa',
-    borderColor: '#e2e8f0',
-  };
-
-  const lo = isDark ? darkLayout : lightLayout;
 
   return (
     <div className={isDark ? 'theme-dark' : 'theme-light'} style={{ minHeight: '100vh' }}>
@@ -168,16 +147,19 @@ function AppLayout() {
         theme={{
           algorithm: isDark ? theme.darkAlgorithm : theme.defaultAlgorithm,
           token: isDark ? {
-            colorPrimary: '#3b82f6',
+            colorPrimary: '#d4a843',
             borderRadius: 8,
-            colorBgContainer: '#0f172a',
-            colorBgElevated: '#1e293b',
-            colorBorder: '#334155',
+            colorBgContainer: '#1A1C23',
+            colorBgElevated: '#1A1C23',
+            colorBorder: '#2A2D35',
+            colorText: '#e2e8f0',
+            colorTextSecondary: '#94a3b8',
+            colorBgLayout: '#0D0F14',
           } : {
-            colorPrimary: '#3b82f6',
+            colorPrimary: '#d4a843',
             borderRadius: 8,
             colorBgContainer: '#ffffff',
-            colorBgElevated: '#f8fafc',
+            colorBgElevated: '#ffffff',
             colorBorder: '#e2e8f0',
           },
           }}
@@ -191,7 +173,7 @@ function AppLayout() {
             centered
           >
             <div style={{ textAlign: 'center', padding: '20px 0' }}>
-              <Title level={3} style={{ margin: 0, color: '#3b82f6' }}>♠ Poker Diary</Title>
+              <Title level={3} style={{ margin: 0, color: '#d4a843', fontFamily: "'Inter', sans-serif" }}>♠ Poker Diary</Title>
               <div style={{ marginTop: 8, color: '#94a3b8', fontSize: 14 }}>
                 {settings.locale === 'en' ? 'Select your language' : 'Выберите язык'}
               </div>
@@ -224,28 +206,31 @@ function AppLayout() {
               </Space>
             </div>
           </Modal>
-          <Layout style={{ minHeight: '100vh' }} ref={siderRef}>
+          <Layout style={{ height: '100vh', overflow: 'hidden', backgroundColor: '#0D0F14' }} ref={siderRef}>
             <Sider
             collapsible
             collapsed={collapsed}
             onCollapse={setCollapsed}
             trigger={null}
+            width={220}
             style={{
-              borderRight: `1px solid ${lo.borderColor}`,
-              background: lo.siderBg,
+              position: 'sticky',
+              top: 0,
+              height: '100vh',
+              backgroundColor: '#0D0F14',
+              borderInlineEnd: 'none',
             }}
           >
             <div style={{ display: 'flex', flexDirection: 'column', height: '100%' }}>
               <div style={{
-                height: 64,
+                height: 56,
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                borderBottom: `1px solid ${lo.borderColor}`,
-                background: isDark ? 'transparent' : '#ffffff',
+                background: 'transparent',
               }}>
-                <Title level={4} style={{ color: '#3b82f6', margin: 0, fontSize: collapsed ? 14 : 18, whiteSpace: 'nowrap' }}>
-                  {collapsed ? '♠' : '♠ Poker Diary'}
+                <Title level={4} style={{ color: '#d4a843', margin: 0, fontSize: collapsed ? 14 : 18, whiteSpace: 'nowrap', fontFamily: "'Inter', sans-serif" }}>
+                  {collapsed ? '' : '♠ Poker Diary'}
                 </Title>
               </div>
               <Menu
@@ -261,58 +246,51 @@ function AppLayout() {
                 }}
               />
               <div style={{
-                borderTop: `1px solid ${lo.borderColor}`,
                 padding: collapsed ? '8px 0' : '12px 16px',
                 paddingBottom: 0,
                 textAlign: 'center',
                 fontSize: 12,
-                color: isDark ? '#94a3b8' : '#64748b',
+                color: isDark ? '#5f6368' : '#94a3b8',
               }}>
                 {collapsed ? (
-                  <span title="E.Lab">♠</span>
+                  <span title="E.Lab" style={{ color: '#d4a843', fontSize: 12 }}>E.Lab</span>
                 ) : (
                   <Space direction="vertical" size={4} style={{ width: '100%' }}>
-                    <span>E.Lab © 2026</span>
+                    <span style={{ color: '#d4a843' }}>E.Lab © 2026</span>
                     <a
                       href="https://t.me/PokerDiary_Bot"
                       target="_blank"
                       rel="noopener noreferrer"
-                      style={{ color: '#3b82f6', textDecoration: 'none' }}
+                      style={{ color: '#d4a843', textDecoration: 'none' }}
                       onClick={(e) => { e.stopPropagation(); }}
                     >
                       @PokerDiary_Bot
                     </a>
-                    <span style={{ fontSize: 10, opacity: 0.5 }}>v{APP_VERSION}</span>
+                    <span style={{ fontSize: 10, color: '#d4a843' }}>v{APP_VERSION}</span>
                   </Space>
                 )}
               </div>
-              <div
-                onClick={() => setCollapsed(!collapsed)}
-                style={{
-                  height: 48,
-                  display: 'flex',
-                  alignItems: 'center',
-                  justifyContent: 'center',
-                  cursor: 'pointer',
-                  borderTop: `1px solid ${lo.borderColor}`,
-                  color: isDark ? '#94a3b8' : '#64748b',
-                  fontSize: 14,
-                  userSelect: 'none',
-                  flexShrink: 0,
-                }}
-              >
-                {collapsed ? '▶' : '◀'}
+              <div className="sider-collapse-track">
+                <div
+                  onClick={() => setCollapsed(!collapsed)}
+                  className={`sider-collapse-btn ${collapsed ? 'collapsed' : ''}`}
+                />
               </div>
             </div>
           </Sider>
-          <Layout>
+          <Layout style={{ backgroundColor: '#0D0F14' }}>
             <Header ref={headerRef} style={{
-              background: lo.headerBg,
-              borderBottom: `1px solid ${lo.headerBorder}`,
               padding: '0 24px',
               display: 'flex',
               alignItems: 'center',
               justifyContent: 'space-between',
+              position: 'sticky',
+              top: 0,
+              zIndex: 100,
+              height: 56,
+              lineHeight: '56px',
+              backgroundColor: '#0D0F14',
+              borderBottom: 'none',
             }}>
               <Title level={4} style={{ color: lo.headerColor, margin: 0 }}>
                 {t('header.title')}
@@ -326,7 +304,7 @@ function AppLayout() {
                       try { localStorage.removeItem(ONBOARDING_KEY); } catch {}
                       setTourOpen(true);
                     }}
-                    style={{ color: isDark ? '#e2e8f0' : '#64748b', fontSize: 18 }}
+                    style={{ fontSize: 18 }}
                   />
                 </Tooltip>
                 <Tooltip title={isEn ? 'Switch language' : 'Сменить язык'}>
@@ -334,7 +312,7 @@ function AppLayout() {
                     type="text"
                     icon={<GlobalOutlined />}
                     onClick={toggleLang}
-                    style={{ color: isDark ? '#e2e8f0' : '#64748b', fontSize: 18 }}
+                    style={{ fontSize: 18 }}
                   >
                     <span style={{ fontSize: 13, marginLeft: 2 }}>{isEn ? 'EN' : 'RU'}</span>
                   </Button>
@@ -344,22 +322,32 @@ function AppLayout() {
                     type="text"
                     icon={isDark ? <SunOutlined /> : <MoonOutlined />}
                     onClick={toggleTheme}
-                    style={{ color: isDark ? '#e2e8f0' : '#64748b', fontSize: 18 }}
+                    style={{ fontSize: 18 }}
                   />
                 </Tooltip>
               </Space>
             </Header>
-            <Content ref={contentRef} style={{ padding: 24, background: lo.contentBg, minHeight: 280 }}>
-              <Routes>
-                <Route path="/backing" element={<BackingPage />} />
-                <Route path="/training" element={<TrainingPage />} />
-                <Route path="/faq" element={<FaqPage />} />
-                <Route path="/movements" element={<MovementsPage />} />
-                <Route path="/" element={<SessionsPage />} />
-                <Route path="/tournaments" element={<TournamentsPage />} />
-                <Route path="/reports" element={<ReportsPage />} />
-                <Route path="/bankroll" element={<BankrollPage />} />
-              </Routes>
+            <Content ref={contentRef} style={{ padding: 24, backgroundColor: '#0D0F14', minHeight: 280, position: 'relative' }}>
+              <AnimatePresence mode="popLayout">
+                <motion.div
+                  key={location.pathname}
+                  initial={{ opacity: 0, y: 24 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -24 }}
+                  transition={{ duration: 0.25, ease: [0.4, 0, 0.2, 1] }}
+                >
+                  <Routes location={location}>
+                    <Route path="/backing" element={<BackingPage />} />
+                    <Route path="/training" element={<TrainingPage />} />
+                    <Route path="/faq" element={<FaqPage />} />
+                    <Route path="/movements" element={<MovementsPage />} />
+                    <Route path="/" element={<SessionsPage />} />
+                    <Route path="/tournaments" element={<TournamentsPage />} />
+                    <Route path="/reports" element={<ReportsPage />} />
+                    <Route path="/bankroll" element={<BankrollPage />} />
+                  </Routes>
+                </motion.div>
+              </AnimatePresence>
             </Content>
           </Layout>
         </Layout>
@@ -379,19 +367,17 @@ function AppLayout() {
           onFinish={closeTour}
         />
       </ConfigProvider>
+      <CustomCursor />
     </div>
   );
 }
 
 export default function App() {
   return (
-    <>
-      <style>{scrollStyles}</style>
-      <HashRouter>
-        <LicenseGate>
-          <AppLayout />
-        </LicenseGate>
-      </HashRouter>
-    </>
+    <HashRouter>
+      <LicenseGate>
+        <AppLayout />
+      </LicenseGate>
+    </HashRouter>
   );
 }

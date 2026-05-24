@@ -1,0 +1,218 @@
+/* ===== MENU — rounded volume cards on hover/selected ===== */
+.theme-dark .ant-menu-item,
+.theme-light .ant-menu-item {
+  border-radius: 0 !important;
+  margin: 4px 8px !important;
+  width: auto !important;
+  padding-left: 16px !important;
+  position: relative !important;
+  transition: all var(--transition-fast) !important;
+}
+
+.theme-dark .ant-menu-item-selected,
+.theme-light .ant-menu-item-selected {
+  background: transparent !important;
+}
+
+.theme-dark .ant-menu-item::before,
+.theme-light .ant-menu-item::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 6px;
+  bottom: 6px;
+  width: 3px;
+  background: transparent;
+  transition: background var(--transition-fast);
+  border-radius: 2px;
+}
+
+.theme-dark .ant-menu-item-selected::before,
+.theme-light .ant-menu-item-selected::before {
+  background: var(--color-accent) !important;
+}
+
+.theme-dark .ant-menu-item:hover {
+  color: var(--color-accent) !important;
+  border-radius: 10px !important;
+  background: rgba(26, 28, 35, 0.8) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 4px 12px rgba(0, 0, 0, 0.3) !important;
+  transform: scale(1.02);
+}
+
+.theme-dark .ant-menu-item-selected {
+  color: var(--color-accent) !important;
+  border-radius: 10px !important;
+  background: rgba(26, 28, 35, 0.9) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.3),
+    0 4px 14px rgba(0, 0, 0, 0.35) !important;
+  border: 1px solid rgba(212, 168, 67, 0.15) !important;
+  transform: scale(1.02);
+}
+
+.theme-light .ant-menu-item:hover {
+  color: var(--color-accent) !important;
+  background: var(--color-accent-soft) !important;
+  border-radius: 10px !important;
+}
+
+.theme-light .ant-menu-item-selected {
+  color: var(--color-accent) !important;
+  background: var(--color-accent-soft) !important;
+  border-radius: 10px !important;
+}
+
+/* ===== HEADER BUTTONS ===== */
+.theme-dark .ant-btn-text {
+  color: var(--color-text-secondary) !important;
+  border-radius: 20px !important;
+  transition: all var(--transition-fast) !important;
+}
+
+.theme-dark .ant-btn-text:hover {
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.04) 0%, transparent 50%),
+    rgba(26, 28, 35, 0.55) !important;
+  backdrop-filter: blur(4px) !important;
+  border: 1px solid var(--color-border) !important;
+  color: var(--color-accent) !important;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.2),
+    0 2px 8px rgba(0, 0, 0, 0.2) !important;
+}
+
+/* ===== PAGE TRANSITION ===== */
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* ===== CARD — no hover effects, only border color change ===== */
+.theme-dark .ant-card,
+.theme-light .ant-card {
+  transition: border-color var(--transition-fast) !important;
+}
+
+.theme-dark .ant-card:hover,
+.theme-light .ant-card:hover {
+  border-color: var(--color-border-hover) !important;
+}
+
+/* ===== SIDER COLLAPSE SLIDER ===== */
+.theme-dark .sider-collapse-track {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0 20px;
+}
+
+.theme-dark .sider-collapse-btn {
+  width: 48px;
+  height: 26px;
+  cursor: pointer;
+  border-radius: 13px;
+  background: rgba(26, 28, 35, 0.4);
+  border: 1px solid rgba(42, 45, 53, 0.4);
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.theme-dark .sider-collapse-btn::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background: rgba(42, 45, 53, 0.6);
+  transition: all var(--transition-normal);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.05),
+    0 1px 3px rgba(0, 0, 0, 0.2);
+}
+
+.theme-dark .sider-collapse-btn.collapsed::before {
+  left: calc(100% - 21px);
+  background: rgba(212, 168, 67, 0.5);
+}
+
+.theme-dark .sider-collapse-btn:hover {
+  border-color: rgba(212, 168, 67, 0.3);
+}
+
+.theme-dark .sider-collapse-btn:hover::before {
+  background: rgba(212, 168, 67, 0.5);
+}
+
+.theme-dark .sider-collapse-btn.collapsed:hover::before {
+  background: rgba(212, 168, 67, 0.6);
+}
+
+.theme-light .sider-collapse-track {
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  padding: 0 20px;
+}
+
+/* ===== CURSOR ===== */
+.custom-cursor {
+  position: fixed;
+  top: -12px;
+  left: -12px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(212, 168, 67, 0.35);
+  background: rgba(212, 168, 67, 0.04);
+  pointer-events: none;
+  z-index: 99999;
+  transition: width 0.25s ease, height 0.25s ease, top 0.25s ease, left 0.25s ease,
+              border-color 0.25s ease, background 0.25s ease;
+  will-change: transform;
+}
+
+.custom-cursor.cursor-hover {
+  width: 40px;
+  height: 40px;
+  top: -20px;
+  left: -20px;
+  border-color: rgba(212, 168, 67, 0.6);
+  background: rgba(212, 168, 67, 0.08);
+  border-width: 2px;
+}
+
+.custom-cursor.cursor-down {
+  width: 16px;
+  height: 16px;
+  top: -8px;
+  left: -8px;
+  border-color: rgba(212, 168, 67, 0.8);
+  background: rgba(212, 168, 67, 0.15);
+}
+
+html, body, * {
+  cursor: none !important;
+}
+
+input, textarea, .ant-input, .ant-input-number {
+  caret-color: #d4a843 !important;
+}
+
+/* ===== SMOOTH ===== */
+html { scroll-behavior: smooth; }
+.ant-collapse-item { transition: all 0.2s ease; }
+.ant-collapse-content { transition: all 0.3s ease-in-out !important; }
+.ant-statistic-content { transition: all 0.2s ease; }
+.ant-table-tbody > tr { transition: background 0.15s ease; }
+.ant-layout-sider { transition: all 0.2s ease !important; }

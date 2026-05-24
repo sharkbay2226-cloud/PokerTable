@@ -1,0 +1,84 @@
+/* ===== DARK THEME TOKENS ===== */
+.theme-dark {
+  --color-bg: #0D0F14;
+  --color-accent: #d4a843;
+  --color-accent-soft: rgba(212, 168, 67, 0.12);
+  --color-profit: #d4a843;
+  --color-loss: #ef4444;
+  --color-text-primary: #e2e8f0;
+  --color-text-secondary: #94a3b8;
+  --color-text-muted: #64748b;
+  --color-surface-card: #1A1C23;
+  --color-surface-elevated: #1A1C23;
+  --color-surface-hover: rgba(212, 168, 67, 0.08);
+  --color-border: #2A2D35;
+  --color-border-hover: #d4a843;
+  --color-scrollbar-track: #0D0F14;
+  --color-scrollbar-thumb: #2A2D35;
+  --color-scrollbar-thumb-hover: #3A3D45;
+}
+
+/* ===== LIGHT THEME TOKENS ===== */
+.theme-light {
+  --color-bg: #f0f2f5;
+  --color-accent: #d4a843;
+  --color-accent-soft: rgba(212, 168, 67, 0.1);
+  --color-profit: #16a34a;
+  --color-loss: #dc2626;
+  --color-text-primary: #1a1a1a;
+  --color-text-secondary: #475569;
+  --color-text-muted: #94a3b8;
+  --color-surface-card: rgba(255, 255, 255, 0.85);
+  --color-surface-elevated: #ffffff;
+  --color-surface-hover: rgba(241, 245, 249, 0.7);
+  --color-border: rgba(0, 0, 0, 0.06);
+  --color-border-hover: rgba(212, 168, 67, 0.3);
+  --color-scrollbar-track: #f1f5f9;
+  --color-scrollbar-thumb: #94a3b8;
+  --color-scrollbar-thumb-hover: #64748b;
+}
+
+/* ===== GLOBAL ===== */
+body {
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+#root {
+  min-height: 100vh;
+}
+
+/* ===== DARK FLAT BACKGROUND ===== */
+.theme-dark {
+  background: #0D0F14;
+  background-image:
+    radial-gradient(ellipse at 30% 20%, rgba(212, 168, 67, 0.02) 0%, transparent 60%),
+    radial-gradient(ellipse at 70% 80%, rgba(255, 255, 255, 0.01) 0%, transparent 50%);
+  background-attachment: fixed;
+}
+
+.theme-light {
+  background: #f0f2f5;
+}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar { width: 8px; height: 8px; }
+::-webkit-scrollbar-track { background: var(--color-scrollbar-track); }
+::-webkit-scrollbar-thumb { background: var(--color-scrollbar-thumb); border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-scrollbar-thumb-hover); }
+
+/* ===== TYPOGRAPHY ===== */
+:root {
+  --font-display: 'Inter', sans-serif;
+  --font-body: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
+  --radius-sm: 8px;
+  --radius-md: 14px;
+  --radius-lg: 16px;
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.2s ease;
+  --transition-slow: 0.3s ease;
+}

@@ -259,7 +259,9 @@
       "playerShare": "Player (You)",
       "remainingProfit": "remaining profit",
       "totalDebt": "Total Debt",
-      "debtFormula": "share + received"
+      "debtFormula": "share + received",
+      "percentOfProfit": "{{percent}}% of profit",
+      "negativeProfit": "Negative profit — backer share not accrued"
     },
     "columns": {
       "room": "Room",

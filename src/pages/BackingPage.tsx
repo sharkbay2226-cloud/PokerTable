@@ -436,85 +436,85 @@ export default function BackingPage() {
       </Row>
 
       {/* Split */}
-      <Card style={{ background: '#1e293b', border: '1px solid #f59e0b20', borderRadius: 8, marginBottom: 24 }}>
-        <Title level={5} style={{ color: '#f59e0b', marginBottom: 16 }}>
+      <Card style={{ marginBottom: 24 }}>
+        <Title level={5} style={{ color: 'var(--color-accent)', marginBottom: 16 }}>
           <PercentageOutlined /> {t('backing.sections.distribution')}
         </Title>
         <Row gutter={[16, 16]}>
           {backers.map((b) => {
             const share = stats.aggregatedBackerShares[b.id] || 0;
             return (
-              <Col key={b.id} span={backers.length <= 4 ? 24 / backers.length : 6}>
-                <Card size="small" style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 8, textAlign: 'center' }}>
-                  <Text type="secondary" style={{ fontSize: 12 }}>{b.name}</Text>
-                  <div style={{ fontSize: 22, fontWeight: 700, color: share >= 0 ? '#52c41a' : '#ff4d4f' }}>
+              <Col key={b.id} span={backers.length <= 4 ? Math.floor(24 / backers.length) : 6}>
+                <Card size="small" style={{ textAlign: 'center' }}>
+                  <Text style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>{b.name}</Text>
+                  <div style={{ fontSize: 22, fontWeight: 700, color: share >= 0 ? 'var(--color-profit)' : 'var(--color-loss)' }}>
                     {formatUsd(share)}
                   </div>
-                  <Text style={{ color: '#94a3b8', fontSize: 12 }}>{t('backing.distribution.percentOfProfit', { percent: b.percent })}</Text>
+                  <Text style={{ color: 'var(--color-text-muted)', fontSize: 12 }}>{t('backing.stats.percentOfProfit', { percent: b.percent })}</Text>
                 </Card>
               </Col>
             );
           })}
           <Col span={6}>
-            <Card size="small" style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 8, textAlign: 'center' }}>
-              <Text type="secondary" style={{ fontSize: 12 }}>{t('backing.stats.received')}</Text>
-              <div style={{ fontSize: 22, fontWeight: 700, color: '#34d399' }}>
+            <Card size="small" style={{ textAlign: 'center' }}>
+              <Text style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>{t('backing.stats.received')}</Text>
+              <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--color-profit)' }}>
                 {formatUsd(stats.totalReceivedUsd)}
               </div>
-              <Text style={{ color: '#94a3b8', fontSize: 12 }}>{t('backing.stats.fromBackers')}</Text>
+              <Text style={{ color: 'var(--color-text-muted)', fontSize: 12 }}>{t('backing.stats.fromBackers')}</Text>
             </Card>
           </Col>
           <Col span={6}>
-            <Card size="small" style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 8, textAlign: 'center' }}>
-              <Text type="secondary" style={{ fontSize: 12 }}>{t('backing.stats.paid')}</Text>
-              <div style={{ fontSize: 22, fontWeight: 700, color: '#f59e0b' }}>
+            <Card size="small" style={{ textAlign: 'center' }}>
+              <Text style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>{t('backing.stats.paid')}</Text>
+              <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--color-accent)' }}>
                 {formatUsd(stats.totalPaidUsd)}
               </div>
-              <Text style={{ color: '#94a3b8', fontSize: 12 }}>{t('backing.stats.alreadyPaid')}</Text>
+              <Text style={{ color: 'var(--color-text-muted)', fontSize: 12 }}>{t('backing.stats.alreadyPaid')}</Text>
             </Card>
           </Col>
           <Col span={6}>
-            <Card size="small" style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 8, textAlign: 'center' }}>
-              <Text type="secondary" style={{ fontSize: 12 }}>{t('backing.stats.selfPaid')}</Text>
-              <div style={{ fontSize: 22, fontWeight: 700, color: '#a855f7' }}>
+            <Card size="small" style={{ textAlign: 'center' }}>
+              <Text style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>{t('backing.stats.paidByBacker')}</Text>
+              <div style={{ fontSize: 22, fontWeight: 700, color: 'var(--color-accent)' }}>
                 {formatUsd(stats.totalBackerPaidUsd)}
               </div>
-              <Text style={{ color: '#94a3b8', fontSize: 12 }}>{t('backing.stats.paidByBacker')}</Text>
+              <Text style={{ color: 'var(--color-text-muted)', fontSize: 12 }}>{t('backing.stats.fromBackers')}</Text>
             </Card>
           </Col>
           <Col span={6}>
-            <Card size="small" style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 8, textAlign: 'center' }}>
-              <Text type="secondary" style={{ fontSize: 12 }}>{t('backing.stats.toPay')}</Text>
-              <div style={{ fontSize: 22, fontWeight: 700, color: stats.totalRemainingUsd > 0 ? '#3b82f6' : '#64748b' }}>
+            <Card size="small" style={{ textAlign: 'center' }}>
+              <Text style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>{t('backing.stats.remainingToPay')}</Text>
+              <div style={{ fontSize: 22, fontWeight: 700, color: stats.totalRemainingUsd > 0 ? 'var(--color-accent)' : 'var(--color-text-muted)' }}>
                 {stats.totalRemainingUsd > 0 ? formatUsd(stats.totalRemainingUsd) : '0.00 $'}
               </div>
-              <Text style={{ color: '#94a3b8', fontSize: 12 }}>{t('backing.stats.remainingAfterPayout')}</Text>
+              <Text style={{ color: 'var(--color-text-muted)', fontSize: 12 }}>{t('backing.stats.remainingAfterPayments')}</Text>
             </Card>
           </Col>
         </Row>
         <Row gutter={[16, 16]} style={{ marginTop: 16 }}>
           <Col span={12}>
-            <Card size="small" style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 8, textAlign: 'center' }}>
-              <Text type="secondary" style={{ fontSize: 12 }}>{t('backing.stats.player')}</Text>
-              <div style={{ fontSize: 22, fontWeight: 700, color: stats.playerShareUsd >= 0 ? '#52c41a' : '#ff4d4f' }}>
+            <Card size="small" style={{ textAlign: 'center' }}>
+              <Text style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>{t('backing.stats.playerShare')}</Text>
+              <div style={{ fontSize: 22, fontWeight: 700, color: stats.playerShareUsd >= 0 ? 'var(--color-profit)' : 'var(--color-loss)' }}>
                 {formatUsd(stats.playerShareUsd)}
               </div>
-              <Text style={{ color: '#94a3b8', fontSize: 12 }}>{t('backing.stats.remainingProfit')}</Text>
+              <Text style={{ color: 'var(--color-text-muted)', fontSize: 12 }}>{t('backing.stats.remainingProfit')}</Text>
             </Card>
           </Col>
           <Col span={12}>
-            <Card size="small" style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 8, textAlign: 'center' }}>
-              <Text type="secondary" style={{ fontSize: 12 }}>{t('backing.stats.totalDebt')}</Text>
-              <div style={{ fontSize: 22, fontWeight: 700, color: stats.totalDebtUsd > 0 ? '#f59e0b' : '#64748b' }}>
+            <Card size="small" style={{ textAlign: 'center' }}>
+              <Text style={{ fontSize: 12, color: 'var(--color-text-secondary)' }}>{t('backing.stats.totalDebt')}</Text>
+              <div style={{ fontSize: 22, fontWeight: 700, color: stats.totalDebtUsd > 0 ? 'var(--color-accent)' : 'var(--color-text-muted)' }}>
                 {formatUsd(stats.totalDebtUsd)}
               </div>
-              <Text style={{ color: '#94a3b8', fontSize: 12 }}>{t('backing.stats.debtBreakdown')}</Text>
+              <Text style={{ color: 'var(--color-text-muted)', fontSize: 12 }}>{t('backing.stats.debtFormula')}</Text>
             </Card>
           </Col>
         </Row>
         {stats.backerShareUsd < 0 && (
           <div style={{ marginTop: 12, textAlign: 'center' }}>
-            <Text type="secondary">{t('backing.info.negativeProfit')}</Text>
+            <Text style={{ color: 'var(--color-text-muted)' }}>{t('backing.stats.negativeProfit')}</Text>
           </div>
         )}
       </Card>
