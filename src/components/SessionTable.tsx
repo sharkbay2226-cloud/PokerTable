@@ -174,7 +174,7 @@ export default function SessionTable() {
 
   const todayStr = useMemo(() => dayjs().format('YYYY-MM-DD'), []);
   const todayRows = useMemo(() =>
-    allRows.filter((r) => r.session.date === todayStr && (r.place > 0 || r.session.inPrize)),
+    allRows.filter((r) => r.session.date === todayStr),
   [allRows, todayStr]);
   const todayProfitUsd = useMemo(() => todayRows.reduce((s, r) => s + r.profitUsd, 0), [todayRows]);
   const todayProfitRub = useMemo(() => todayRows.reduce((s, r) => s + r.profitRub, 0), [todayRows]);

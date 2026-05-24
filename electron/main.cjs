@@ -1,4 +1,4 @@
-const { app, BrowserWindow, ipcMain, shell, dialog } = require('electron');
+const { app, BrowserWindow, ipcMain, shell, dialog, Menu } = require('electron');
 const path = require('path');
 const { fork } = require('child_process');
 const { autoUpdater } = require('electron-updater');
@@ -11,7 +11,7 @@ const isDev = !app.isPackaged;
 function startServer() {
   const serverPath = path.join(__dirname, '..', 'server', 'index.js');
   serverProcess = fork(serverPath, [], {
-    env: { ...process.env, API_PORT: '3001' },
+    env: { ...process.env, API_PORT: '3001', USER_DATA_DIR: app.getPath('userData') },
     stdio: 'pipe',
   });
   serverProcess.stdout?.on('data', (d) => process.stdout.write('[server] ' + d));
@@ -96,6 +96,7 @@ ipcMain.handle('license:revalidate', async () => {
 });
 
 app.whenReady().then(() => {
+  Menu.setApplicationMenu(null);
   startServer();
   createWindow();
   if (!isDev) {

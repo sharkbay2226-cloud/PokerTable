@@ -1,10 +1,12 @@
 import http from 'node:http';
-import { readFileSync, writeFileSync, existsSync } from 'node:fs';
+import { readFileSync, writeFileSync, existsSync, copyFileSync, unlinkSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const DB_PATH = join(__dirname, 'db.json');
+const DB_PATH = process.env.USER_DATA_DIR
+  ? join(process.env.USER_DATA_DIR, 'db.json')
+  : join(__dirname, 'db.json');
 
 const DEFAULT_DATA = { rooms: [], tournaments: [], sessions: [], bankroll: [], training: [] };
 

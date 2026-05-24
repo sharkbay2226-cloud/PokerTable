@@ -5,6 +5,7 @@ import { QuestionCircleOutlined, DatabaseOutlined, BarChartOutlined, TrophyOutli
 import { useTranslation } from 'react-i18next';
 import { useAppStore } from './store/appStore';
 import i18n from './i18n/i18n';
+const APP_VERSION = '0.1.4';
 import LicenseGate from './components/LicenseGate';
 import SessionsPage from './pages/SessionsPage';
 import ReportsPage from './pages/ReportsPage';
@@ -228,6 +229,7 @@ function AppLayout() {
             collapsible
             collapsed={collapsed}
             onCollapse={setCollapsed}
+            trigger={null}
             style={{
               borderRight: `1px solid ${lo.borderColor}`,
               background: lo.siderBg,
@@ -261,6 +263,7 @@ function AppLayout() {
               <div style={{
                 borderTop: `1px solid ${lo.borderColor}`,
                 padding: collapsed ? '8px 0' : '12px 16px',
+                paddingBottom: 0,
                 textAlign: 'center',
                 fontSize: 12,
                 color: isDark ? '#94a3b8' : '#64748b',
@@ -279,8 +282,26 @@ function AppLayout() {
                     >
                       @PokerDiary_Bot
                     </a>
+                    <span style={{ fontSize: 10, opacity: 0.5 }}>v{APP_VERSION}</span>
                   </Space>
                 )}
+              </div>
+              <div
+                onClick={() => setCollapsed(!collapsed)}
+                style={{
+                  height: 48,
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  cursor: 'pointer',
+                  borderTop: `1px solid ${lo.borderColor}`,
+                  color: isDark ? '#94a3b8' : '#64748b',
+                  fontSize: 14,
+                  userSelect: 'none',
+                  flexShrink: 0,
+                }}
+              >
+                {collapsed ? '▶' : '◀'}
               </div>
             </div>
           </Sider>

@@ -140,7 +140,9 @@
       "rub": "Ruble (₽)",
       "amount": "Amount",
       "comment": "Comment",
-      "commentPlaceholder": "e.g. card deposit"
+      "commentPlaceholder": "e.g. card deposit",
+      "depositOk": "Save",
+      "withdrawOk": "Save"
     }
   },
   "movements": {
@@ -371,7 +373,8 @@
       "buyIn": "Buy-in",
       "profit": "Profit",
       "played": "Played",
-      "cost": "Cost"
+      "cost": "Cost",
+      "games": "games"
     },
     "tooltips": {
       "gamesPlayed": "Games Played",
@@ -392,27 +395,27 @@
       "title": "FAQ — How It Works"
     },
     "room": {
-      "label": "🏠 Room — What Is It?",
+      "label": "Room — What Is It?",
       "content": "A room is a poker platform (PokerStars, GG Poker, CoinPoker, etc.). All tournaments are grouped by room. You can add, edit and delete rooms on the «Tournaments» page."
     },
     "tournament": {
-      "label": "🏆 Tournament — How to Add?",
+      "label": "Tournament — How to Add?",
       "content": "On the «Tournaments» page, select a room and click «Add Tournament». Enter the name, buy-in and currency. Once created, the tournament will appear in the list available for a new session."
     },
     "session": {
-      "label": "🎮 Game Session — What Is It?",
+      "label": "Game Session — What Is It?",
       "content": "A session is one played tournament. On the «Sessions» page, click «Start Tournament», select a room and tournament, specify a backer (if any) and save. After saving, the session appears in the table with column sorting and pagination (20 rows by default). You can edit fields (backing, place, prize, bounty) directly in the table row."
     },
     "finish": {
-      "label": "✅ Finish Session — Why?",
+      "label": "Finish Session — Why?",
       "content": "If you started a tournament but didn't fill in the result — click «Finish Session». All unfinished sessions for today will be marked as played without winnings and removed from the «Today» block. You can find them using the calendar by selecting that date."
     },
     "bankroll": {
-      "label": "💰 Bankroll — How It Works",
+      "label": "Bankroll — How It Works",
       "content": "Bankroll automatically calculates the balance for each room: tournament profit + manual operations. You can deposit (+) or withdraw (-) funds in any currency (USD/EUR/RUB). Exchange rates can be edited manually or fetched from the internet (refresh button). Each room can have its display currency (USD/EUR/RUB) using buttons at the bottom of the card. «Backer paid» operations don't affect room balance — they only appear in history."
     },
     "reports": {
-      "label": "📊 Reports — What's There?",
+      "label": "Reports — What's There?",
       "intro": "The «Reports» page contains charts and statistics:",
       "list": {
         "profitByRoom": "Profit by Room",
@@ -427,11 +430,11 @@
       "footer": "At the top you can select the display currency and filter by room or tournament."
     },
     "currencies": {
-      "label": "💱 Currencies — How to Configure?",
+      "label": "Currencies — How to Configure?",
       "content": "The app supports three currencies: USD, EUR, RUB. All amounts are stored in USD in the database. Exchange rates are set on the «Bankroll» page. You can enter them manually or click the refresh button to fetch current rates from exchangerate-api.com. Rates are saved in localStorage and persist on reload. For each room you can select a display currency (USD/EUR/RUB) — balance will be shown in RUB and EUR at current rates while the base value stays in USD."
     },
     "backing": {
-      "label": "🧑‍💼 Backing — How It Works",
+      "label": "Backing — How It Works",
       "intro": "On the «Backing» page you can manage backers (investors) who fund your tournaments.",
       "list": {
         "add": "Adding Backers",
@@ -447,7 +450,7 @@
       }
     },
     "movements": {
-      "label": "🔄 Movements — What Is It?",
+      "label": "Movements — What Is It?",
       "intro": "The «Movements» page shows all financial operations in chronological order:",
       "list": {
         "wins": "Wins and Losses",
@@ -457,8 +460,12 @@
       },
       "footer": "Filtering is available by room, operation type, date, and sorting (newest/oldest first). Pagination — 20 records per page."
     },
+    "training": {
+      "label": "Matrix Trainer — How to Use?",
+      "content": "The «Training» page has two tabs: «Editor» and «Trainer». In the Editor, create poker range matrices: name colors, paint hands, add a description, adjust weights. In the Trainer, you can practice in two modes — Classic (verify correct actions) and Drawing (draw a range and compare with the correct answer)."
+    },
     "backup": {
-      "label": "🗄 Backup",
+      "label": "Backup",
       "desc1": "All data is stored in the <code>server/db.json</code> file in the project folder. As long as the server is running (<code>node server/index.js</code>), the app reads and writes data to this file. You can open it in any text editor, copy it, commit to git, or replace it.",
       "desc2": "On each startup, the app automatically duplicates data to the browser's localStorage as a fallback. Below you can download a full dump or restore data from a .json file.",
       "desc3": "The server must be running. It is recommended to launch via <code>Start.bat</code> — it starts the server + frontend with a single command and opens the browser. Alternatively, manually: <code>npm run dev</code>. Without the server, the page will load but data won't be available."

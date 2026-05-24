@@ -3,8 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { Card, Row, Col, Statistic, Collapse, Space, Select, Button } from 'antd';
 import { TrophyOutlined, DollarOutlined, RiseOutlined, FallOutlined, TeamOutlined, BankOutlined, PieChartOutlined, BarChartOutlined, LineChartOutlined } from '@ant-design/icons';
 import { PieChart, Pie, Cell, BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, LineChart, Line, ResponsiveContainer, Legend } from 'recharts';
-import { getAllSessions, getAllTournaments, getAllRooms } from '../db/db';
-import type { Session, Tournament, Room, Currency } from '../types';
+import { getAllSessions, getAllTournaments, getAllRooms, getAllBankrollEntries } from '../db/db';
+import type { Session, Tournament, Room, Currency, BankrollEntry } from '../types';
 import { convertToRub, formatRub } from '../utils/currency';
 import { useAppStore } from '../store/appStore';
 
@@ -25,12 +25,14 @@ export default function Charts() {
   const [tournamentNameFilter, setTournamentNameFilter] = useState<string>('all');
   const [expenseTournamentFilter, setExpenseTournamentFilter] = useState<string[]>([]);
   const [showWorst, setShowWorst] = useState(false);
+  const [bankrollEntries, setBankrollEntries] = useState<BankrollEntry[]>([]);
 
   useEffect(() => {
-    Promise.all([getAllSessions(), getAllTournaments(), getAllRooms()]).then(([s, t, r]) => {
+    Promise.all([getAllSessions(), getAllTournaments(), getAllRooms(), getAllBankrollEntries()]).then(([s, t, r, b]) => {
       setSessions(s);
       setTournaments(t);
       setRooms(r);
+      setBankrollEntries(b);
     });
   }, []);
 
@@ -218,21 +220,33 @@ export default function Charts() {
   }, [enriched]);
 
   const bankroll = useMemo(() => {
+    const sessionPoints = enriched.map((r) => ({
+      date: r.date,
+      valueRub: r.profitRub,
+      name: r.tour?.name ?? '—',
+    }));
+    const bankrollPoints = bankrollEntries
+      .filter((e) => roomFilter.length === 0 || roomFilter.includes(e.roomId))
+      .map((e) => ({
+        date: e.date,
+        valueRub: e.amount * settings.usdToRub,
+        name: (e.amount >= 0 ? 'Пополнение' : 'Снятие'),
+      }));
+    const combined = [...sessionPoints, ...bankrollPoints]
+      .sort((a, b) => a.date.localeCompare(b.date));
     let cum = 0;
-    return enriched
-      .sort((a, b) => a.date.localeCompare(b.date))
-      .map((r, i) => {
-        cum += r.profitRub;
-        let val = Math.round(cum);
-        if (chartCurrency === 'USD') val = val / settings.usdToRub;
-        else if (chartCurrency === 'EUR') val = val / settings.eurToRub;
-        return {
-          id: i + 1,
-          name: r.tour?.name ?? '—',
-          bankroll: Math.round(val * 100) / 100,
-        };
-      });
-  }, [enriched, chartCurrency, settings.usdToRub, settings.eurToRub]);
+    return combined.map((p, i) => {
+      cum += p.valueRub;
+      let val = Math.round(cum);
+      if (chartCurrency === 'USD') val = val / settings.usdToRub;
+      else if (chartCurrency === 'EUR') val = val / settings.eurToRub;
+      return {
+        id: i + 1,
+        name: p.name,
+        bankroll: Math.round(val * 100) / 100,
+      };
+    });
+  }, [enriched, bankrollEntries, chartCurrency, settings.usdToRub, settings.eurToRub, roomFilter]);
 
   const formatChartValue = (v: number) => {
     if (chartCurrency === 'RUB') return formatRub(v);
@@ -574,7 +588,7 @@ export default function Charts() {
                       </div>
                       <div style={{ textAlign: 'center' }}>
                         <span style={{ color: '#64748b', fontSize: 10, display: 'block' }}>{t('reports.expenses.profit')}</span>
-                        <span style={{ color: '#ff4d4f', fontWeight: 700, fontSize: 15 }}>{formatChartValue(w.profit)}</span>
+                        <span style={{ color: w.profit >= 0 ? '#52c41a' : '#ff4d4f', fontWeight: 700, fontSize: 15 }}>{formatChartValue(w.profit)}</span>
                       </div>
                     </Space>
                   </div>

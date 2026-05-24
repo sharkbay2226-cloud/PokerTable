@@ -730,7 +730,7 @@ export default function BackingPage() {
           setBackerModal(false);
         }}
         onCancel={() => setBackerModal(false)}
-        okText={editingBacker ? t('backing.actions.save') : t('backing.actions.addBacker')}
+        okText={editingBacker ? t('backing.backerModal.save') : t('backing.backerModal.add')}
         cancelText={t('backing.actions.cancel')}
         destroyOnClose
       >

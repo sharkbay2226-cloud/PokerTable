@@ -23,7 +23,7 @@ nsis:
   oneClick: false
   perMachine: false
   allowToChangeInstallationDirectory: true
-  deleteAppDataOnUninstall: false
+  deleteAppDataOnUninstall: true
   createDesktopShortcut: true
   createStartMenuShortcut: true
   shortcutName: Poker Diary

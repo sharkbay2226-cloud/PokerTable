@@ -11,7 +11,6 @@ bot/bot.db
 .DS_Store
 Thumbs.db
 *.log
-*.tsbuildinfo
 worker/.wrangler/
 server/start-server.bat
 
@@ -40,3 +39,26 @@ bot/report.html
 # Local dev instructions
 DEV_SETUP.md
 INSTRUCTIONS.md
+
+# Generated asar (electron bundles)
+*.asar
+
+# Runtime data — never commit user db
+**/db.json
+
+# Bot DB & env
+bot/.env
+bot/data/
+*.sqlite
+*.sqlite3
+
+# Build artifacts
+*.tsbuildinfo
+*.css.map
+*.js.map
+
+# Temp & system
+*.tmp
+*.temp
+desktop.ini
+.vscode/settings.json

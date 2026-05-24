@@ -1,6 +1,6 @@
 import { useTranslation, Trans } from 'react-i18next';
 import { Typography, Collapse, Button, Space, message, Modal } from 'antd';
-import { InfoCircleOutlined, DownloadOutlined, UploadOutlined, DeleteOutlined, FileExcelOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, DownloadOutlined, UploadOutlined, DeleteOutlined, FileExcelOutlined, HomeOutlined, TrophyOutlined, PlayCircleOutlined, CheckCircleOutlined, WalletOutlined, BarChartOutlined, DollarOutlined, TeamOutlined, SwapOutlined, ExperimentOutlined, DatabaseOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import { exportAllData, importAllData, clearAllSessions, getAllRooms, getAllTournaments, getAllSessions, getAllBankrollEntries } from '../db/db';
 
@@ -128,10 +128,11 @@ export default function FaqPage() {
         accordion
         defaultActiveKey={['1']}
         style={{ textAlign: 'left' }}
+        expandIconPosition="end"
         items={[
           {
             key: '1',
-            label: t('faq.room.label'),
+            label: <Space><HomeOutlined />{t('faq.room.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.room.content')}
@@ -140,7 +141,7 @@ export default function FaqPage() {
           },
           {
             key: '2',
-            label: t('faq.tournament.label'),
+            label: <Space><TrophyOutlined />{t('faq.tournament.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.tournament.content')}
@@ -149,7 +150,7 @@ export default function FaqPage() {
           },
           {
             key: '3',
-            label: t('faq.session.label'),
+            label: <Space><PlayCircleOutlined />{t('faq.session.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.session.content')}
@@ -158,7 +159,7 @@ export default function FaqPage() {
           },
           {
             key: '4',
-            label: t('faq.finish.label'),
+            label: <Space><CheckCircleOutlined />{t('faq.finish.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.finish.content')}
@@ -167,7 +168,7 @@ export default function FaqPage() {
           },
           {
             key: '5',
-            label: t('faq.bankroll.label'),
+            label: <Space><WalletOutlined />{t('faq.bankroll.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.bankroll.content')}
@@ -176,7 +177,7 @@ export default function FaqPage() {
           },
           {
             key: '6',
-            label: t('faq.reports.label'),
+            label: <Space><BarChartOutlined />{t('faq.reports.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.reports.intro')}
@@ -192,7 +193,7 @@ export default function FaqPage() {
           },
           {
             key: '7',
-            label: t('faq.currencies.label'),
+            label: <Space><DollarOutlined />{t('faq.currencies.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.currencies.content')}
@@ -201,7 +202,7 @@ export default function FaqPage() {
           },
           {
             key: '9',
-            label: t('faq.backing.label'),
+            label: <Space><TeamOutlined />{t('faq.backing.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.backing.intro')}
@@ -217,7 +218,7 @@ export default function FaqPage() {
           },
           {
             key: '10',
-            label: t('faq.movements.label'),
+            label: <Space><SwapOutlined />{t('faq.movements.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.movements.intro')}
@@ -230,8 +231,17 @@ export default function FaqPage() {
             ),
           },
           {
+            key: '11',
+            label: <Space><ExperimentOutlined />{t('faq.training.label')}</Space>,
+            children: (
+              <Paragraph>
+                {t('faq.training.content')}
+              </Paragraph>
+            ),
+          },
+          {
             key: '8',
-            label: t('faq.backup.label'),
+            label: <Space><DatabaseOutlined />{t('faq.backup.label')}</Space>,
             children: (
               <div style={{ textAlign: 'center' }}>
                 <Paragraph>
