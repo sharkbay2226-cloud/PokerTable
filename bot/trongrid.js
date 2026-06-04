@@ -89,7 +89,7 @@ export async function getIncomingTransfers(minTimestamp) {
         txid: tx.transaction_id,
         from: tx.from,
         to: tx.to,
-        value: parseFloat(tx.value || '0'),
+        value: parseFloat(tx.value || '0') / 1_000_000,
         token: tx.token_info?.symbol || 'USDT',
         timestamp: tx.block_timestamp,
       }))
