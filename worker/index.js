@@ -34,6 +34,15 @@ export default {
 
 async function ensureTables(env) {
   try {
+    await env.DB.prepare(`CREATE TABLE IF NOT EXISTS licenses (
+      key TEXT PRIMARY KEY,
+      plan TEXT NOT NULL CHECK(plan IN ('monthly','yearly','lifetime')),
+      status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','revoked','expired')),
+      expires_at TEXT NOT NULL,
+      current_fingerprint TEXT,
+      activated_at TEXT,
+      created_at TEXT DEFAULT (datetime('now'))
+    )`).run();
     await env.DB.prepare(`CREATE TABLE IF NOT EXISTS activations (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       license_key TEXT NOT NULL,

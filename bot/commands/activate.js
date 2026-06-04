@@ -1,6 +1,5 @@
+import { getLatestActiveLicense } from '../db.js';
 import { signChallenge } from '../crypto.js';
-import { addLicense } from '../db.js';
-import { createLicense } from '../worker.js';
 
 export function activateCommand(bot) {
   bot.command('activate', async (ctx) => {
@@ -19,6 +18,12 @@ export function activateCommand(bot) {
 
     if (challenge.length < 16 || challenge.length > 256) {
       await ctx.reply('❌ Неверный формат кода запроса.');
+      return;
+    }
+
+    const active = getLatestActiveLicense(ctx.from.id);
+    if (!active) {
+      await ctx.reply('❌ Офлайн-активация доступна только при наличии активной лицензии.\n\nКупить: /buy');
       return;
     }
 

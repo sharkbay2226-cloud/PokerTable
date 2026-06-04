@@ -1,4 +1,4 @@
-import { createPromoCode, deletePromoCode, getAllPromoCodes, getAllOrders, addLicense } from '../db.js';
+import { createPromoCode, deletePromoCode, getAllPromoCodes, getAllOrders, addLicense, revokeLicense } from '../db.js';
 import { createLicense } from '../worker.js';
 
 const ADMIN_IDS = (process.env.ADMIN_IDS || '').split(',').map(Number).filter(Boolean);
@@ -93,6 +93,9 @@ export function adminCommand(bot) {
         body: JSON.stringify({ key }),
       });
       const data = await res.json();
+      if (data.ok) {
+        revokeLicense(key);
+      }
       await ctx.reply(data.ok ? `✅ Ключ отозван. ${data.message}` : '❌ ' + (data.error || 'Ошибка'));
     } catch (e) {
       await ctx.reply('❌ ' + e.message);

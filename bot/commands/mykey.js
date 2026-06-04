@@ -20,7 +20,7 @@ export function mykeyCommand(bot) {
       const expiresAt = new Date(lic.expires_at);
       const isActive = lic.status === 'active' && expiresAt > now;
       const icon = isActive ? '✅' : '❌';
-      const plan = lic.plan === 'lifetime' ? '♾️ Бессрочная' : '📅 Годовая';
+      const plan = ({ monthly: '📅 Месячная', yearly: '📅 Годовая', lifetime: '♾️ Бессрочная' })[lic.plan] || lic.plan;
       const expires = lic.plan === 'lifetime' ? '—' : expiresAt.toISOString().slice(0, 10);
 
       lines.push(`${icon} <code>${lic.key}</code>`);

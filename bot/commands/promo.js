@@ -71,10 +71,14 @@ export function promoCommand(bot) {
         return;
       }
 
-      usePromoCode(code);
       const WALLET = process.env.USDT_WALLET || '';
       const order = createOrder(ctx.from.id, plan, amountUsd, amountUsd, WALLET, code);
-      if (!order) throw new Error('Failed to create order');
+      if (!order) {
+        await ctx.editMessageText('❌ Ошибка создания заказа.');
+        await ctx.answerCallbackQuery();
+        return;
+      }
+      usePromoCode(code);
 
       const msg = [
         '✅ <b>Заказ со скидкой создан!</b>',

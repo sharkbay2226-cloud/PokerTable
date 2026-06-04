@@ -128,9 +128,10 @@ export function createOrder(userId, plan, amountUsd, amountUsdt, walletAddress, 
 }
 
 export function confirmOrder(orderId, txid) {
-  exec('UPDATE orders SET status="confirmed",txid=?,confirmed_at=datetime("now") WHERE id=? AND status="pending"', {
+  const modified = exec('UPDATE orders SET status="confirmed",txid=?,confirmed_at=datetime("now") WHERE id=? AND status="pending"', {
     0: txid, 1: orderId,
   });
+  if (modified === 0) return null;
   return row('SELECT * FROM orders WHERE id = ?', { 0: orderId });
 }
 
@@ -226,6 +227,10 @@ export function deletePromoCode(code) {
 
 export function getAllPromoCodes() {
   return rows('SELECT * FROM promo_codes ORDER BY created_at DESC');
+}
+
+export function revokeLicense(key) {
+  exec("UPDATE licenses SET status='revoked' WHERE key=?", { 0: key });
 }
 
 export function getAllOrders() {
