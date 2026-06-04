@@ -20,7 +20,7 @@ export function startCommand(bot) {
       '🤖 <b>Poker Diary Bot</b> — покупка и управление лицензией.',
       '',
       '📥 <b>Скачать приложение:</b>',
-      '<a href="http://sharkbqo.beget.tech/Poker%20Diary%20Setup%200.2.2.exe">Poker Diary Setup 0.2.2</a> (хостинг)',
+      '<a href="http://sharkbqo.beget.tech/Poker%20Diary%20Setup%200.2.3.exe">Poker Diary Setup 0.2.3</a> (хостинг)',
       '<a href="https://github.com/sharkbay2226-cloud/PokerTable/releases/latest">GitHub Releases</a>',
       '',
       '📋 <b>Команды:</b>',

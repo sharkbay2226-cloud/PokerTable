@@ -12,7 +12,7 @@ import { useTranslation } from 'react-i18next';
 import { useAppStore, DEFAULT_MENU_ORDER } from './store/appStore';
 import i18n from './i18n/i18n';
 import { mockLicenseAPI } from './mock/mockLicenseAPI';
-const APP_VERSION = '0.2.2';
+const APP_VERSION = '0.2.3';
 import LicenseGate from './components/LicenseGate';
 import CustomCursor from './components/CustomCursor';
 import SessionsPage from './pages/SessionsPage';

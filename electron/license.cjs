@@ -167,10 +167,10 @@ async function getLicenseStatus() {
     if (s.plan === 'lifetime') {
       return { status: 'licensed', plan: 'lifetime', activatedAt: s.activatedAt };
     }
-    if (s.plan === 'yearly' && s.expiresAt > now) {
-      return { status: 'licensed', plan: 'yearly', expiresAt: s.expiresAt };
+    if ((s.plan === 'yearly' || s.plan === 'monthly') && s.expiresAt > now) {
+      return { status: 'licensed', plan: s.plan, expiresAt: s.expiresAt };
     }
-    if (s.plan === 'yearly') {
+    if (s.plan === 'yearly' || s.plan === 'monthly') {
       if (now - s.expiresAt < GRACE_MS) {
         return { status: 'grace', expiresAt: s.expiresAt };
       }

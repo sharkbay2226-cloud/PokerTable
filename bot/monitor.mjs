@@ -62,7 +62,7 @@ async function issueLicenseForOrder(order, bot, txValue) {
       `<code>${licenseKey}</code>`,
       '',
       '📥 <b>Скачать приложение:</b>',
-      '<a href="http://sharkbqo.beget.tech/Poker%20Diary%20Setup%200.2.2.exe">Poker Diary Setup 0.2.2</a>',
+      '<a href="http://sharkbqo.beget.tech/Poker%20Diary%20Setup%200.2.3.exe">Poker Diary Setup 0.2.3</a>',
       '',
       '📋 Введите ключ в приложении:',
       '   Menu → Ввести ключ → Онлайн-активация',
