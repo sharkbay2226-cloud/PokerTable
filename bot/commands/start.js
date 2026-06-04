@@ -33,6 +33,7 @@ export function startCommand(bot) {
       '/ref — Реферальная ссылка',
       '',
       hasActive ? '✅ У вас есть активная лицензия.' : '💡 Лицензии нет — используйте /buy для покупки.',
+      `🆔 Ваш ID: <code>${ctx.from.id}</code>`,
     ].join('\n');
 
     await ctx.reply(msg, { parse_mode: 'HTML' });
