@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Card, Row, Col, Input, InputNumber, Table, Statistic, Space, Typography, Button, Modal, message, Collapse, Popconfirm, Select, DatePicker } from 'antd';
-import { DeleteOutlined, EditOutlined, PlusOutlined, TeamOutlined, PercentageOutlined, DollarOutlined, WalletOutlined, ArrowDownOutlined, ArrowUpOutlined, HistoryOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, PlusOutlined, TeamOutlined, PercentageOutlined, DollarOutlined, WalletOutlined, ArrowDownOutlined, ArrowUpOutlined, HistoryOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { getAllRooms, getAllSessions, getAllTournaments, getAllBankrollEntries, addBankrollEntry, deleteBankrollEntry, updateBankrollEntry } from '../db/db';
 import type { Room, Tournament, Session, Currency, BankrollEntry, Backer } from '../types';
@@ -26,6 +26,7 @@ export default function BackingPage() {
   const [recvAmount, setRecvAmount] = useState(0);
   const [recvBackerId, setRecvBackerId] = useState('');
   const [recvDate, setRecvDate] = useState<dayjs.Dayjs>(dayjs());
+  const [recvCurrency, setRecvCurrency] = useState<Currency>('USD');
   const [recvSaving, setRecvSaving] = useState(false);
   const [payoutModal, setPayoutModal] = useState(false);
   const [payoutRoomId, setPayoutRoomId] = useState<string>('');
@@ -50,6 +51,7 @@ export default function BackingPage() {
   const [editingBacker, setEditingBacker] = useState<Backer | null>(null);
   const [backerFormName, setBackerFormName] = useState('');
   const [backerFormPercent, setBackerFormPercent] = useState(50);
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const getRoomCurrency = (roomId: string): Currency => settings.roomDisplayCurrency?.[roomId] || 'USD';
 
@@ -119,15 +121,15 @@ export default function BackingPage() {
       const totalBackerShareUsd = Object.values(backerShares).reduce((s, v) => s + v, 0);
       const paidUsd = entries
         .filter((e) => e.roomId === roomId && e.comment?.startsWith('Выплата бэкеру'))
-        .reduce((s, e) => s + Math.abs(e.amount), 0);
+        .reduce((s, e) => s + convertToUsd(Math.abs(e.amount), e.currency || 'USD'), 0);
       const receivedUsd = entries
         .filter((e) => e.roomId === roomId && e.comment?.startsWith('Получение от бэкера'))
-        .reduce((s, e) => s + Math.abs(e.amount), 0);
+        .reduce((s, e) => s + convertToUsd(Math.abs(e.amount), e.currency || 'USD'), 0);
       const backerPaidUsd = entries
         .filter((e) => e.roomId === roomId && e.comment?.startsWith('Оплата бэкером'))
-        .reduce((s, e) => s + Math.abs(e.amount), 0);
-      const debtUsd = totalBackerShareUsd + receivedUsd;
-      const remainingUsd = debtUsd > 0 ? Math.max(0, debtUsd - paidUsd - backerPaidUsd) : 0;
+        .reduce((s, e) => s + convertToUsd(Math.abs(e.amount), e.currency || 'USD'), 0);
+      const debtUsd = Math.max(0, totalBackerShareUsd + receivedUsd + backerPaidUsd - paidUsd);
+      const remainingUsd = debtUsd;
 
       return { room, buyInUsd, prizeUsd, bountyUsd, profitUsd, backerShareUsd: totalBackerShareUsd, backerShares, receivedUsd, paidUsd, backerPaidUsd, debtUsd, remainingUsd };
     });
@@ -154,15 +156,15 @@ export default function BackingPage() {
 
     const totalPaidUsd = entries
       .filter((e) => e.comment?.startsWith('Выплата бэкеру'))
-      .reduce((s, e) => s + Math.abs(e.amount), 0);
+      .reduce((s, e) => s + convertToUsd(Math.abs(e.amount), e.currency || 'USD'), 0);
     const totalReceivedUsd = entries
       .filter((e) => e.comment?.startsWith('Получение от бэкера'))
-      .reduce((s, e) => s + Math.abs(e.amount), 0);
+      .reduce((s, e) => s + convertToUsd(Math.abs(e.amount), e.currency || 'USD'), 0);
     const totalBackerPaidUsd = entries
       .filter((e) => e.comment?.startsWith('Оплата бэкером'))
-      .reduce((s, e) => s + Math.abs(e.amount), 0);
-    const totalDebtUsd = totalBackerShareUsd + totalReceivedUsd;
-    const totalRemainingUsd = totalDebtUsd > 0 ? Math.max(0, totalDebtUsd - totalPaidUsd - totalBackerPaidUsd) : 0;
+      .reduce((s, e) => s + convertToUsd(Math.abs(e.amount), e.currency || 'USD'), 0);
+    const totalDebtUsd = Math.max(0, totalBackerShareUsd + totalReceivedUsd + totalBackerPaidUsd - totalPaidUsd);
+    const totalRemainingUsd = totalDebtUsd;
 
     return { totalBuyInUsd, totalPrizeUsd, totalBountyUsd, totalProfitUsd, backerShareUsd: totalBackerShareUsd, aggregatedBackerShares, playerShareUsd, totalPaidUsd, totalReceivedUsd, totalBackerPaidUsd, totalDebtUsd, totalRemainingUsd };
   }, [roomStats, settings.backers, entries]);
@@ -172,7 +174,7 @@ export default function BackingPage() {
     setRecvSaving(true);
     try {
       const backer = backers.find((b) => b.id === recvBackerId) || backers[0];
-      const currency = getRoomCurrency(recvModal.roomId);
+      const currency = recvCurrency;
       await addBankrollEntry({
         roomId: recvModal.roomId,
         amount: recvAmount,
@@ -292,7 +294,7 @@ export default function BackingPage() {
     { title: t('backing.columns.room'), dataIndex: ['room', 'name'], key: 'room', width: 100 },
     { title: t('backing.columns.buyIns'), key: 'buyIn', width: 80, render: (_: unknown, r: typeof roomStats[0]) => formatUsd(r.buyInUsd) },
     { title: t('backing.columns.profit'), key: 'profit', width: 80, render: (_: unknown, r: typeof roomStats[0]) => (
-      <span style={{ color: r.profitUsd >= 0 ? '#52c41a' : '#ff4d4f', fontWeight: 600 }}>
+      <span style={{ color: r.profitUsd >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', fontWeight: 600 }}>
         {formatUsd(r.profitUsd)}
       </span>
     )},
@@ -324,7 +326,7 @@ export default function BackingPage() {
               fontSize: 12, height: 26, borderRadius: 6,
             }}
             icon={<ArrowDownOutlined />}
-            onClick={() => { setRecvModal({ roomId: r.room.id, roomName: r.room.name }); setRecvAmount(0); setRecvBackerId(backers[0]?.id || ''); }}>
+            onClick={() => { setRecvModal({ roomId: r.room.id, roomName: r.room.name }); setRecvAmount(0); setRecvBackerId(backers[0]?.id || ''); setRecvCurrency(getRoomCurrency(r.room.id)); }}>
             {t('backing.actions.receive')}
           </Button>
           {r.remainingUsd > 0 && (
@@ -349,12 +351,15 @@ export default function BackingPage() {
         .backing-btn { transition: transform 0.2s ease, box-shadow 0.2s ease !important; }
         .backing-btn:hover { transform: scale(1.06); box-shadow: 0 4px 14px rgba(59,130,246,0.35) !important; }
       `}</style>
-      <Title level={3} style={{ marginBottom: 24 }}>
-        <TeamOutlined /> {t('backing.page.title')}
-      </Title>
+      <Space style={{ marginBottom: 24 }}>
+        <Title level={3} style={{ margin: 0 }}>
+          <TeamOutlined /> {t('backing.page.title')}
+        </Title>
+        <Button type="text" icon={<QuestionCircleOutlined style={{ color: 'var(--color-accent)', fontSize: 18 }} />} onClick={() => setHelpOpen(true)} />
+      </Space>
 
       {/* Backers card */}
-      <Card style={{ background: '#1e293b', border: '1px solid #3b82f620', borderRadius: 8, marginBottom: 24 }}>
+      <Card style={{ background: 'var(--color-surface-card)', border: '1px solid var(--color-accent)', borderRadius: 8, marginBottom: 24 }}>
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
           <Title level={5} style={{ color: '#e2e8f0', margin: 0 }}><TeamOutlined /> {t('backing.sections.backers')}</Title>
           <Space>
@@ -376,7 +381,7 @@ export default function BackingPage() {
           <Row gutter={[12, 12]}>
             {backers.map((b) => (
               <Col key={b.id}>
-                <Card size="small" style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 8, minWidth: 180 }}>
+                <Card size="small" style={{ minWidth: 180 }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
                     <TeamOutlined style={{ color: '#3b82f6' }} />
                     <Text strong style={{ flex: 1 }}>{b.name}</Text>
@@ -400,36 +405,36 @@ export default function BackingPage() {
       {/* Summary cards */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col span={8}>
-          <Card style={{ background: '#1e293b', border: '1px solid #3b82f620', borderRadius: 8, textAlign: 'center' }}>
+          <Card style={{ textAlign: 'center' }}>
             <Statistic
               title={<Text type="secondary">{t('backing.stats.totalBuyIns')}</Text>}
               value={stats.totalBuyInUsd}
               precision={2}
               suffix="$"
-              valueStyle={{ color: '#e2e8f0', fontSize: 22 }}
+              valueStyle={{ color: 'var(--color-text)', fontSize: 22 }}
               prefix={<DollarOutlined />}
             />
           </Card>
         </Col>
         <Col span={8}>
-          <Card style={{ background: '#1e293b', border: '1px solid #3b82f620', borderRadius: 8, textAlign: 'center' }}>
+          <Card style={{ textAlign: 'center' }}>
             <Statistic
               title={<Text type="secondary">{t('backing.stats.totalProfit')}</Text>}
               value={stats.totalProfitUsd}
               precision={2}
               suffix="$"
-              valueStyle={{ color: stats.totalProfitUsd >= 0 ? '#52c41a' : '#ff4d4f', fontSize: 22 }}
+              valueStyle={{ color: stats.totalProfitUsd >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', fontSize: 22 }}
             />
           </Card>
         </Col>
         <Col span={8}>
-          <Card style={{ background: '#1e293b', border: '1px solid #3b82f620', borderRadius: 8, textAlign: 'center' }}>
+          <Card style={{ textAlign: 'center' }}>
             <Statistic
               title={<Text type="secondary">ROI</Text>}
               value={stats.totalBuyInUsd > 0 ? (stats.totalProfitUsd / stats.totalBuyInUsd) * 100 : 0}
               precision={2}
               suffix="%"
-              valueStyle={{ color: stats.totalProfitUsd >= 0 ? '#52c41a' : '#ff4d4f', fontSize: 22 }}
+              valueStyle={{ color: stats.totalProfitUsd >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', fontSize: 22 }}
             />
           </Card>
         </Col>
@@ -520,8 +525,8 @@ export default function BackingPage() {
       </Card>
 
       {/* By room breakdown */}
-      <Card style={{ background: '#1e293b', border: '1px solid #3b82f620', borderRadius: 8, marginBottom: 24 }}>
-        <Title level={5} style={{ color: '#e2e8f0', marginBottom: 16 }}>{t('backing.sections.byRoom')}</Title>
+      <Card style={{ marginBottom: 24 }}>
+        <Title level={5} style={{ color: 'var(--color-text)', marginBottom: 16 }}>{t('backing.sections.byRoom')}</Title>
         <Table
           dataSource={roomStats.filter((r) => r.buyInUsd > 0 || r.receivedUsd > 0 || r.paidUsd > 0)}
           columns={roomColumns}
@@ -532,7 +537,7 @@ export default function BackingPage() {
       </Card>
 
       {/* History */}
-      <Card style={{ background: '#1e293b', border: '1px solid #334155', borderRadius: 8 }}>
+      <Card>
         <Collapse
           ghost
           expandIconPosition="end"
@@ -624,14 +629,13 @@ export default function BackingPage() {
         title={t('backing.actions.receiveTitle', { room: recvModal?.roomName ?? '' })}
         open={!!recvModal}
         onOk={handleReceive}
-        onCancel={() => { setRecvModal(null); setRecvAmount(0); }}
+        onCancel={() => { setRecvModal(null); setRecvAmount(0); setRecvCurrency('USD'); }}
         confirmLoading={recvSaving}
         okText={t('backing.actions.receive')}
         cancelText={t('backing.actions.cancel')}
-        destroyOnClose
+        destroyOnHidden
       >
         {recvModal && (() => {
-          const currency = getRoomCurrency(recvModal.roomId);
           return (
             <Space direction="vertical" style={{ width: '100%' }}>
               {backers.length > 1 && (
@@ -645,13 +649,21 @@ export default function BackingPage() {
                 </div>
               )}
               <div>
-                <Text type="secondary">{t('backing.fields.amount', { currency })}</Text>
+                <Text type="secondary">{t('backing.fields.currency')}</Text>
+                <Select value={recvCurrency} onChange={(v: Currency) => setRecvCurrency(v)} style={{ width: '100%' }}>
+                  <Select.Option value="USD">$ USD</Select.Option>
+                  <Select.Option value="RUB">₽ RUB</Select.Option>
+                  <Select.Option value="EUR">€ EUR</Select.Option>
+                </Select>
+              </div>
+              <div>
+                <Text type="secondary">{t('backing.fields.amount', { currency: recvCurrency })}</Text>
                 <InputNumber
                   value={recvAmount}
                   onChange={(v) => setRecvAmount(v ?? 0)}
                   min={0}
                   style={{ width: '100%' }}
-                  prefix={currency === 'USD' ? '$' : currency === 'EUR' ? '€' : '₽'}
+                  prefix={recvCurrency === 'USD' ? '$' : recvCurrency === 'EUR' ? '€' : '₽'}
                   size="large"
                 />
               </div>
@@ -676,7 +688,7 @@ export default function BackingPage() {
         confirmLoading={paySaving}
         okText={t('backing.actions.pay')}
         cancelText={t('backing.actions.cancel')}
-        destroyOnClose
+        destroyOnHidden
       >
         {payModal && (() => {
           const currency = getRoomCurrency(payModal.roomId);
@@ -732,7 +744,7 @@ export default function BackingPage() {
         onCancel={() => setBackerModal(false)}
         okText={editingBacker ? t('backing.backerModal.save') : t('backing.backerModal.add')}
         cancelText={t('backing.actions.cancel')}
-        destroyOnClose
+        destroyOnHidden
       >
         <Space direction="vertical" style={{ width: '100%' }}>
           <div>
@@ -755,7 +767,7 @@ export default function BackingPage() {
         confirmLoading={payoutSaving}
         okText={t('backing.actions.pay')}
         cancelText={t('backing.actions.cancel')}
-        destroyOnClose
+        destroyOnHidden
       >
         <Space direction="vertical" style={{ width: '100%' }}>
           {backers.length > 1 && (
@@ -814,7 +826,7 @@ export default function BackingPage() {
         confirmLoading={editSaving}
         okText={t('backing.actions.save')}
         cancelText={t('backing.actions.cancel')}
-        destroyOnClose
+        destroyOnHidden
       >
         <Space direction="vertical" style={{ width: '100%' }}>
           <Text type="secondary">
@@ -832,6 +844,22 @@ export default function BackingPage() {
             size="large"
           />
         </Space>
+      </Modal>
+
+      <Modal title={<span style={{ color: 'var(--color-accent)' }}>{t('backing.help.title')}</span>} open={helpOpen} onCancel={() => setHelpOpen(false)} footer={null} width={520}>
+        <Typography.Paragraph>{t('backing.help.intro')}</Typography.Paragraph>
+        <Typography.Paragraph>
+          <span style={{ color: 'var(--color-accent)', fontWeight: 'bold' }}>{t('backing.help.backers')}</span><br />
+          {t('backing.help.backersDesc')}
+        </Typography.Paragraph>
+        <Typography.Paragraph>
+          <span style={{ color: 'var(--color-accent)', fontWeight: 'bold' }}>{t('backing.help.distribution')}</span><br />
+          {t('backing.help.distributionDesc')}
+        </Typography.Paragraph>
+        <Typography.Paragraph>
+          <span style={{ color: 'var(--color-accent)', fontWeight: 'bold' }}>{t('backing.help.history')}</span><br />
+          {t('backing.help.historyDesc')}
+        </Typography.Paragraph>
       </Modal>
     </div>
   );

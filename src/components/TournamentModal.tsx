@@ -3,6 +3,7 @@ import { Modal, Form, Input, Select, InputNumber, Button, List, Space, Popconfir
 import { PlusOutlined, EditOutlined, DeleteOutlined } from '@ant-design/icons';
 import { getAllTournaments, addTournament, updateTournament, deleteTournament, getAllRooms } from '../db/db';
 import type { Tournament, Room, Currency } from '../types';
+import { TOURNAMENT_TYPES } from '../types';
 
 interface Props {
   open: boolean;
@@ -15,6 +16,7 @@ export default function TournamentModal({ open, onClose }: Props) {
   const [form] = Form.useForm();
   const [editingId, setEditingId] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
+  const [customType, setCustomType] = useState('');
 
   const load = async () => {
     const [tours, roomList] = await Promise.all([getAllTournaments(), getAllRooms()]);
@@ -30,16 +32,18 @@ export default function TournamentModal({ open, onClose }: Props) {
     if (open) load();
   }, [open]);
 
-  const handleSubmit = async (values: { name: string; roomId: string; buyIn: number; currency: Currency }) => {
+  const handleSubmit = async (values: { name: string; roomId: string; buyIn: number; currency: Currency; type?: string }) => {
     setLoading(true);
     try {
+      const type = values.type === '__custom__' ? customType : values.type;
       if (editingId) {
-        await updateTournament(editingId, values);
+        await updateTournament(editingId, { ...values, type });
       } else {
-        await addTournament(values);
+        await addTournament({ ...values, type });
       }
       form.resetFields();
       setEditingId(null);
+      setCustomType('');
       await load();
     } finally {
       setLoading(false);
@@ -48,7 +52,10 @@ export default function TournamentModal({ open, onClose }: Props) {
 
   const handleEdit = (t: Tournament) => {
     setEditingId(t.id);
-    form.setFieldsValue({ name: t.name, roomId: t.roomId, buyIn: t.buyIn, currency: t.currency });
+    form.setFieldsValue({ name: t.name, roomId: t.roomId, buyIn: t.buyIn, currency: t.currency, type: t.type && TOURNAMENT_TYPES.includes(t.type) ? t.type : '__custom__' });
+    if (t.type && !TOURNAMENT_TYPES.includes(t.type)) {
+      setCustomType(t.type);
+    }
   };
 
   const handleDelete = async (id: string) => {
@@ -59,11 +66,12 @@ export default function TournamentModal({ open, onClose }: Props) {
   const handleCancel = () => {
     form.resetFields();
     setEditingId(null);
+    setCustomType('');
     onClose();
   };
 
   return (
-    <Modal title="Управление турнирами" open={open} onCancel={handleCancel} footer={null} width={600}>
+    <Modal title="Управление турнирами" open={open} onCancel={handleCancel} footer={null} width={650}>
       <Form form={form} layout="inline" onFinish={handleSubmit} style={{ marginBottom: 16, flexWrap: 'wrap', gap: 8 }}>
         <Form.Item name="name" rules={[{ required: true, message: 'Введите название' }]}>
           <Input placeholder="Название турнира" style={{ width: 180 }} />
@@ -85,6 +93,19 @@ export default function TournamentModal({ open, onClose }: Props) {
             <Select.Option value="EUR">EUR</Select.Option>
           </Select>
         </Form.Item>
+        <Form.Item name="type">
+          <Select
+            placeholder="Тип"
+            style={{ width: 150 }}
+            onChange={(v) => { if (v !== '__custom__') setCustomType(''); }}
+            allowClear
+          >
+            {TOURNAMENT_TYPES.map((t) => (
+              <Select.Option key={t} value={t}>{t}</Select.Option>
+            ))}
+            <Select.Option value="__custom__">✏️ Свой тип...</Select.Option>
+          </Select>
+        </Form.Item>
         <Form.Item>
           <Button type="primary" htmlType="submit" loading={loading} icon={<PlusOutlined />}>
             {editingId ? 'Сохранить' : 'Добавить'}
@@ -92,10 +113,20 @@ export default function TournamentModal({ open, onClose }: Props) {
         </Form.Item>
         {editingId && (
           <Form.Item>
-            <Button onClick={() => { setEditingId(null); form.resetFields(); }}>Отмена</Button>
+            <Button onClick={() => { setEditingId(null); form.resetFields(); setCustomType(''); }}>Отмена</Button>
           </Form.Item>
         )}
       </Form>
+      {form.getFieldValue('type') === '__custom__' && (
+        <div style={{ marginBottom: 16, padding: '0 8px' }}>
+          <Input
+            placeholder="Введите свой тип турнира"
+            value={customType}
+            onChange={(e) => setCustomType(e.target.value)}
+            style={{ maxWidth: 300 }}
+          />
+        </div>
+      )}
       <List
         dataSource={tournaments}
         renderItem={(t) => (
@@ -111,6 +142,7 @@ export default function TournamentModal({ open, onClose }: Props) {
               <strong>{t.name}</strong>
               <span>{t.roomName}</span>
               <span>Buy-in: {t.buyIn} {t.currency}</span>
+              {t.type && <span style={{ color: '#d4a843' }}>{t.type}</span>}
             </Space>
           </List.Item>
         )}

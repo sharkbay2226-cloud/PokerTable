@@ -45,12 +45,12 @@
 .theme-dark .ant-menu-item-selected {
   color: var(--color-accent) !important;
   border-radius: 10px !important;
-  background: rgba(26, 28, 35, 0.9) !important;
+  background: linear-gradient(135deg, rgba(212,168,67,0.12) 0%, rgba(212,168,67,0.04) 100%) !important;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.05),
     inset 0 -1px 0 rgba(0, 0, 0, 0.3),
     0 4px 14px rgba(0, 0, 0, 0.35) !important;
-  border: 1px solid rgba(212, 168, 67, 0.15) !important;
+  border: 1px solid rgba(212, 168, 67, 0.2) !important;
   transform: scale(1.02);
 }
 
@@ -86,21 +86,29 @@
     0 2px 8px rgba(0, 0, 0, 0.2) !important;
 }
 
+/* ===== POKER DECOR ===== */
+@keyframes suitFloat {
+  0%, 100% { transform: translateY(0) rotate(0deg); opacity: 0.5; }
+  50% { transform: translateY(-6px) rotate(8deg); opacity: 0.8; }
+}
+
+@keyframes suitSpin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}
+
+.poker-suit-decoration {
+  position: absolute;
+  pointer-events: none;
+  opacity: 0.04;
+  font-size: 120px;
+  user-select: none;
+}
+
 /* ===== PAGE TRANSITION ===== */
 @keyframes fadeInUp {
   from { opacity: 0; transform: translateY(8px); }
   to { opacity: 1; transform: translateY(0); }
-}
-
-/* ===== CARD — no hover effects, only border color change ===== */
-.theme-dark .ant-card,
-.theme-light .ant-card {
-  transition: border-color var(--transition-fast) !important;
-}
-
-.theme-dark .ant-card:hover,
-.theme-light .ant-card:hover {
-  border-color: var(--color-border-hover) !important;
 }
 
 /* ===== SIDER COLLAPSE SLIDER ===== */
@@ -165,48 +173,160 @@
   padding: 0 20px;
 }
 
-/* ===== CURSOR ===== */
+.theme-light .sider-collapse-btn {
+  width: 48px;
+  height: 26px;
+  cursor: pointer;
+  border-radius: 13px;
+  background: rgba(0, 0, 0, 0.06);
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  transition: all var(--transition-normal);
+  position: relative;
+}
+
+.theme-light .sider-collapse-btn::before {
+  content: '';
+  position: absolute;
+  left: 3px;
+  top: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  background: rgba(0, 0, 0, 0.12);
+  transition: all var(--transition-normal);
+}
+
+.theme-light .sider-collapse-btn.collapsed::before {
+  left: calc(100% - 21px);
+  background: rgba(236, 208, 111, 0.5);
+}
+
+.theme-light .sider-collapse-btn:hover {
+  border-color: rgba(236, 208, 111, 0.3);
+}
+
+.theme-light .sider-collapse-btn:hover::before {
+  background: rgba(236, 208, 111, 0.5);
+}
+
+.theme-light .sider-collapse-btn.collapsed:hover::before {
+  background: rgba(236, 208, 111, 0.6);
+}
+
+/* ===== CURSOR — ♠ Suit Arrow ===== */
 .custom-cursor {
   position: fixed;
-  top: -12px;
-  left: -12px;
-  width: 24px;
-  height: 24px;
-  border-radius: 50%;
-  border: 1.5px solid rgba(212, 168, 67, 0.35);
-  background: rgba(212, 168, 67, 0.04);
+  top: 0;
+  left: 0;
+  width: 28px;
+  height: 28px;
   pointer-events: none;
   z-index: 99999;
-  transition: width 0.25s ease, height 0.25s ease, top 0.25s ease, left 0.25s ease,
-              border-color 0.25s ease, background 0.25s ease;
+  transform: translate(-50%, -50%) rotate(-30deg);
+  transition: filter 0.2s ease, transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
   will-change: transform;
+  animation: cursorBreathe 3s ease-in-out infinite;
+}
+
+.custom-cursor::after {
+  content: '♠';
+  font-size: 28px;
+  color: #d4a843;
+  font-weight: 400;
+  line-height: 1;
+  text-shadow: 0 0 8px rgba(212, 168, 67, 0.4);
+  display: block;
+}
+
+@keyframes cursorBreathe {
+  0%, 100% { transform: translate(-50%, -50%) rotate(-30deg) scale(1); }
+  50% { transform: translate(-50%, -50%) rotate(-30deg) scale(1.06); }
 }
 
 .custom-cursor.cursor-hover {
-  width: 40px;
-  height: 40px;
-  top: -20px;
-  left: -20px;
-  border-color: rgba(212, 168, 67, 0.6);
-  background: rgba(212, 168, 67, 0.08);
-  border-width: 2px;
+  filter: drop-shadow(0 0 14px rgba(212, 168, 67, 0.6));
+  animation: cursorHover 0.3s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes cursorHover {
+  0% { transform: translate(-50%, -50%) rotate(-30deg) scale(1); opacity: 0.7; }
+  100% { transform: translate(-50%, -50%) rotate(-30deg) scale(1.35); opacity: 0.45; }
+}
+
+.custom-cursor.cursor-hover::after {
+  text-shadow: 0 0 12px rgba(212, 168, 67, 0.6);
+}
+
+.custom-cursor.cursor-leave {
+  animation: cursorLeave 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+@keyframes cursorLeave {
+  0% { transform: translate(-50%, -50%) rotate(-30deg) scale(1.35); opacity: 0.45; }
+  100% { transform: translate(-50%, -50%) rotate(-30deg) scale(1); opacity: 1; }
 }
 
 .custom-cursor.cursor-down {
-  width: 16px;
-  height: 16px;
-  top: -8px;
-  left: -8px;
-  border-color: rgba(212, 168, 67, 0.8);
-  background: rgba(212, 168, 67, 0.15);
+  animation: cursorPress 0.1s ease-out forwards;
+}
+
+@keyframes cursorPress {
+  0% { transform: translate(-50%, -50%) rotate(-30deg) scale(1.35); opacity: 0.45; }
+  100% { transform: translate(-50%, -50%) rotate(-30deg) scale(0.85); opacity: 1; }
 }
 
 html, body, * {
   cursor: none !important;
 }
 
-input, textarea, .ant-input, .ant-input-number {
+input, textarea, .ant-input, .ant-input-number, [contenteditable] {
   caret-color: #d4a843 !important;
+}
+
+/* ===== PROFIT/LOSS PULSE ===== */
+@keyframes pulseProfit {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; box-shadow: 0 0 12px rgba(212, 168, 67, 0.3); }
+}
+
+@keyframes pulseLoss {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.6; box-shadow: 0 0 12px rgba(239, 68, 68, 0.3); }
+}
+
+.pulse-profit {
+  animation: pulseProfit 1.5s ease-in-out 2;
+}
+
+.pulse-loss {
+  animation: pulseLoss 1.5s ease-in-out 2;
+}
+
+/* ===== COUNTER SPRING ===== */
+@keyframes countUp {
+  from { opacity: 0; transform: translateY(8px) scale(0.95); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+.counter-spring {
+  animation: countUp 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
+}
+
+/* ===== SKELETON LOADING ===== */
+.poker-skeleton {
+  background: linear-gradient(90deg,
+    var(--color-surface-card) 25%,
+    rgba(212, 168, 67, 0.08) 50%,
+    var(--color-surface-card) 75%
+  );
+  background-size: 200% 100%;
+  animation: skeletonShimmer 1.5s ease-in-out infinite;
+  border-radius: 8px;
+}
+
+@keyframes skeletonShimmer {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
 }
 
 /* ===== SMOOTH ===== */

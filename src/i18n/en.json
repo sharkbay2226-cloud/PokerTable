@@ -7,20 +7,52 @@
     "reports": "Reports",
     "backing": "Backing",
     "training": "Training",
-    "faq": "FAQ"
+    "goals": "Goals",
+    "faq": "FAQ",
+    "equity": "Calculator",
+    "reorder": "Reorder menu",
+    "saveOrder": "Save order",
+    "collapse": "Collapse",
+    "expand": "Expand"
   },
   "header": {
-    "title": "Poker Session Diary"
+    "title": "Poker Session Diary",
+    "sessionsPlayed": "Sessions",
+    "tournamentsPlayed": "Tournaments",
+    "profit": "Profit",
+    "activeGoals": "Active Goals",
+    "completedGoals": "Completed Goals"
   },
   "sessions": {
     "page": {
       "title": "Sessions",
-      "noActive": "No active sessions today",
-      "ended": "{{count}} sessions ended"
+      "noActive": "No active session started",
+      "ended": "{{count}} sessions ended",
+      "activeCount": "Active: {{count}}",
+      "completedCount": "Completed: {{count}}",
+      "totalBuyIn": "Total Buy-in:",
+      "profitLabel": "Profit:",
+      "sessionLabel": "Session",
+      "reEntrySuccess": "New tournament added",
+      "newDayNotify": "New day! Your session has carried over to a new day.",
+      "completeNotify": "All tournaments are completed. Time to finish the session.",
+      "modalEndTitle": "Finish Session",
+      "modalStartTitle": "Start Tournament",
+      "modalEndContent": "Are you sure you want to finish the session? All active tournaments will be marked as played with no winnings.",
+      "modalEndContentSession": "Are you sure you want to finish Session #{{number}}? All active tournaments will be marked as played with no winnings.",
+      "modalStartContent": "You already have an active session. Continue?",
+      "modalStartOk": "Continue",
+      "modalCancel": "Cancel"
     },
     "actions": {
       "start": "Start Tournament",
-      "endDay": "Finish Session"
+      "startSession": "Start Session",
+      "endDay": "Finish Session",
+      "finish": "Finish",
+      "finishDisabled": "Set place first",
+      "completed": "Completed",
+      "playAgain": "Play Again",
+      "reEntry": "Re-entry"
     },
     "table": {
       "sortDesc": "Click to sort descending",
@@ -48,8 +80,13 @@
       },
       "empty": "No sessions. Click \"Start Tournament\" to add the first one!",
       "today": "Today",
+      "inPlay": "In Play",
+      "playedToday": "Completed Today",
       "sessionsFor": "Sessions for",
       "allSessions": "All Sessions",
+      "sessionLabel": "Session",
+      "noSessionLabel": "No session",
+      "deleteSessionConfirm": "Delete this session and all its tournaments?",
     "total": "Total:",
     "summary": "Total Summary",
     "export": {
@@ -72,6 +109,16 @@
       },
       "deleteConfirm": "Delete session?",
       "months": ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"]
+    },
+    "help": {
+      "title": "How Sessions Work",
+      "intro": "Sessions help group tournaments by playing day and track results in real time.",
+      "start": "Start Session / Tournament",
+      "startDesc": "Click 'Start Session' to open a playing day. Then add tournaments via 'Start Tournament'. Select room, tournament and fill in the result.",
+      "endDay": "Finish Session",
+      "endDayDesc": "When all tournaments are done, click 'Finish Session'. Any unfinished tournaments will be marked as played with no winnings.",
+      "table": "Session Table",
+      "tableDesc": "The table shows all played tournaments. You can filter by room, tournament, date and range. Export to Excel and JSON is available."
     }
   },
   "sessionForm": {
@@ -89,6 +136,8 @@
       "tournamentWait": "Select a room first",
       "tournamentNone": "No tournaments for this room"
     },
+    "colorFilter": "Level",
+    "colorFilterPlaceholder": "All levels",
     "info": {
       "room": "Room:",
       "tournament": "Tournament:",
@@ -143,12 +192,37 @@
       "commentPlaceholder": "e.g. card deposit",
       "depositOk": "Save",
       "withdrawOk": "Save"
+    },
+    "help": {
+      "title": "How Bankroll Works",
+      "intro": "Bankroll is your total gaming budget, automatically updated with each tournament and manually via deposit/withdraw operations.",
+      "cards": {
+        "title": "Summary Cards",
+        "content": "Cards show: total bankroll balance, total tournament profit, and manual operations total. All amounts are shown in USD, with RUB and EUR conversion below."
+      },
+      "rooms": {
+        "title": "Room Blocks",
+        "content": "Each room shows its current balance with deposit/withdraw buttons. The count of active sessions in that room is shown on the right."
+      },
+      "manual": {
+        "title": "Manual Operations",
+        "content": "Use 'Deposit' or 'Withdraw' buttons under a room to manually adjust the balance — e.g. for bank transfers or fund withdrawals."
+      },
+      "history": {
+        "title": "Operation History",
+        "content": "All operations (automatic and manual) are shown on the 'Movements' page, where you can filter by date, room, and operation type."
+      }
     }
   },
   "movements": {
     "page": {
       "title": "Movements",
-      "empty": "No records"
+      "empty": "No records",
+      "deleteSuccess": "Entry deleted",
+      "deleteError": "Delete error",
+      "deleteConfirm": "Delete this entry?",
+      "deleteOk": "Delete",
+      "deleteCancel": "Cancel"
     },
     "filters": {
       "from": "From",
@@ -172,6 +246,14 @@
       "losses": "Losses",
       "deposits": "Deposits",
       "withdrawals": "Withdrawals"
+    },
+    "help": {
+      "title": "How to Read Movements",
+      "intro": "All money operations are shown here: wins, losses, deposits and bankroll withdrawals.",
+      "filters": "Filters & Sorting",
+      "filtersDesc": "Filter entries by date (from/to), room and operation type. Sorting is available: newest or oldest first.",
+      "types": "Operation Types",
+      "typesDesc": "Win — tournament prize. Loss — tournament buy-in. Deposit — manual bankroll deposit. Withdrawal — manual fund withdrawal."
     }
   },
   "tournaments": {
@@ -180,7 +262,8 @@
       "addRoom": "Add Room",
       "noRooms": "No rooms. Add the first room!",
       "addTournament": "Add Tournament",
-      "back": "Back"
+      "back": "Back",
+      "roomCount": "{{room}} — {{count}} tournaments"
     },
     "tabs": {
       "rooms": "Rooms",
@@ -199,7 +282,8 @@
       "nameDuplicate": "A room with this name already exists",
       "namePlaceholder": "e.g. PokerStars",
       "save": "Save",
-      "add": "Add"
+      "add": "Add",
+      "currencyLabel": "Default currency"
     },
     "tournamentModal": {
       "editTitle": "Edit Tournament",
@@ -218,6 +302,14 @@
       "save": "Save",
       "add": "Add"
     },
+    "colors": {
+      "label": "Tournament Level",
+      "none": "No level",
+      "red": "Hard",
+      "yellow": "Medium",
+      "green": "High",
+      "blue": "Top"
+    },
     "presetRooms": {
       "quickSelect": "Quick add from popular rooms",
       "selectPlaceholder": "Select a popular room",
@@ -232,7 +324,17 @@
     "count": "{{count}} tournaments",
     "sortDesc": "Click to sort descending",
     "sortAsc": "Click to sort ascending",
-    "cancelSort": "Cancel sorting"
+    "cancelSort": "Cancel sorting",
+    "help": {
+      "title": "How to Manage Tournaments",
+      "intro": "Here you create and edit poker rooms and tournaments that are used in game sessions.",
+      "rooms": "Room Management",
+      "roomsDesc": "Add poker rooms (PokerStars, GG Poker, etc.). You can quick-select popular rooms or create your own. Each room has a default currency.",
+      "tournaments": "Tournament Management",
+      "tournamentsDesc": "Inside each room you can add unlimited tournaments with buy-in, currency, level and type.",
+      "types": "Tournament Types",
+      "typesDesc": "In settings you can define custom tournament types (e.g. MTT, SnG, Spin&Go) which are displayed in the session table."
+    }
   },
   "backing": {
     "page": {
@@ -310,7 +412,8 @@
       "deleteConfirm": "Delete entry?",
       "paidByBacker": "Paid by Backer",
       "typePayment": "Payment",
-      "typeReceipt": "Receipt"
+      "typeReceipt": "Receipt",
+      "entriesCount": "Entries: {{count}}"
     },
     "fields": {
       "backer": "Backer",
@@ -336,6 +439,16 @@
     },
     "info": {
       "negativeProfit": "Negative profit — backer share reduces total debt"
+    },
+    "help": {
+      "title": "How Backing Works",
+      "intro": "Backing is when an investor (backer) pays part of the buy-ins in exchange for a share of winnings.",
+      "backers": "Backers",
+      "backersDesc": "Add a backer with their stake percentage. For each backer, received and paid amounts are calculated automatically.",
+      "distribution": "Distribution by Room",
+      "distributionDesc": "Each room shows: how much the backer paid in buy-ins, profit generated, how much has been paid out and remaining to pay.",
+      "history": "Payment History",
+      "historyDesc": "The history table shows all receiving and payment operations with the backer. You can add, edit and delete entries."
     }
   },
   "reports": {
@@ -353,6 +466,7 @@
     "stats": {
       "totalProfit": "Total Profit",
       "totalWon": "Total Won",
+      "totalBountyWon": "Bounty Won",
       "sessionsPlayed": "Tournaments Played",
       "avgBuyIn": "Avg Buy-in",
       "bestRoom": "Best Room"
@@ -390,6 +504,14 @@
       "profitEur": "Profit (€)",
       "tournaments": "Tournaments",
       "bankroll": "Bankroll"
+    },
+    "help": {
+      "title": "How to Read Reports",
+      "intro": "Reports show your poker statistics for the selected period as charts and tables.",
+      "graphs": "Charts",
+      "graphsDesc": "Charts show bankroll dynamics, daily profit and distribution by room. You can switch between different currencies.",
+      "filters": "Filters",
+      "filtersDesc": "Use filters by date and room to analyze results for a specific period or in a specific poker room."
     }
   },
   "faq": {
@@ -409,8 +531,8 @@
       "content": "A session is one played tournament. On the «Sessions» page, click «Start Tournament», select a room and tournament, specify a backer (if any) and save. After saving, the session appears in the table with column sorting and pagination (20 rows by default). You can edit fields (backing, place, prize, bounty) directly in the table row."
     },
     "finish": {
-      "label": "Finish Session — Why?",
-      "content": "If you started a tournament but didn't fill in the result — click «Finish Session». All unfinished sessions for today will be marked as played without winnings and removed from the «Today» block. You can find them using the calendar by selecting that date."
+      "label": "How to Start a Session?",
+      "content": "A session is a group of tournaments for one playing day. To start, click «Start Session» — a game session opens, then the «Start Tournament» button becomes available. Add tournaments one by one, filling in results. When all tournaments for the day are played or you want to end the day, click «Finish Session» — all unfinished tournaments will be marked as played without winnings. Completed sessions can be viewed in the table with date filtering."
     },
     "bankroll": {
       "label": "Bankroll — How It Works",
@@ -468,9 +590,7 @@
     },
     "backup": {
       "label": "Backup",
-      "desc1": "All data is stored in the <code>server/db.json</code> file in the project folder. As long as the server is running (<code>node server/index.js</code>), the app reads and writes data to this file. You can open it in any text editor, copy it, commit to git, or replace it.",
-      "desc2": "On each startup, the app automatically duplicates data to the browser's localStorage as a fallback. Below you can download a full dump or restore data from a .json file.",
-      "desc3": "The server must be running. It is recommended to launch via <code>Start.bat</code> — it starts the server + frontend with a single command and opens the browser. Alternatively, manually: <code>npm run dev</code>. Without the server, the page will load but data won't be available."
+      "desc1": "All data is stored in the <code>server/db.json</code> file in the project folder. As long as the server is running (<code>node server/index.js</code>), the app reads and writes data to this file. You can open it in any text editor, copy it, commit to git, or replace it."
     },
     "buttons": {
       "downloadBackup": "Download backup (.json)",
@@ -492,6 +612,58 @@
       "content": "All game sessions and bankroll operations will be deleted. Manual data and tournaments will remain.",
       "okText": "Clear",
       "cancelText": "Cancel"
+    },
+    "goals": {
+      "label": "Goals — How Do They Work?",
+      "content": "On the «Goals» page you can set a target by tournament count and/or profit in USD. Progress is shown on the goal card. When a goal is reached, it auto-marks as completed. Completed goals can be viewed in the archive. A goal is considered met when any threshold is reached (tournaments OR profit)."
+    },
+    "license": {
+      "label": "License & Trial — How It Works",
+      "content": "On first launch, a 14-day trial is activated. To purchase the full version: message @PokerDiary_Bot, use /buy, pay USDT (TRC-20), get your key, and activate it in the app. Online activation (enter key) and offline (challenge-response via bot) are supported. A 7-day grace period applies if the server is unreachable. The license is re-validated every 60 minutes and on startup. Up to 3 devices per key."
+    },
+    "theme": {
+      "label": "Dark/Light Theme",
+      "content": "The theme toggle is in the right part of the header (sun/moon icon). Switching is instant and persists across sessions."
+    },
+    "menuOrder": {
+      "label": "How to reorder menu items?",
+      "content": "At the bottom of the sidebar there is a menu icon button. Click it — menu items become draggable. Drag them into your desired order and click the green checkmark to save."
+    },
+    "excel": {
+      "label": "Excel Export — What's Included?",
+      "content": "The «Export to Excel» button creates a file with 4 sheets: Rooms (room list), Tournaments (tournaments with buy-in), Sessions (all sessions with place and prize), Bankroll (bankroll operations). The file is saved to your Downloads folder."
+    }
+  },
+  "goals": {
+    "page": {
+      "title": "Goals",
+      "addGoal": "Add Goal",
+      "noGoals": "No goals yet. Create your first goal!",
+      "startDate": "Start",
+      "tournamentsPlayed": "tournaments played",
+      "completedTitle": "Completed Goals",
+      "completedDate": "Completed",
+      "setTarget": "Set the number of tournaments:",
+      "setProfitTarget": "Profit target (optional):",
+      "targetCountPlaceholder": "Number of tournaments",
+      "profitTargetPlaceholder": "Profit in USD",
+      "profitLabel": "profit",
+      "deleteConfirm": "Delete this goal?",
+      "create": "Create",
+      "cancel": "Cancel",
+      "created": "Goal created!",
+      "showAll": "Show all ({{count}})",
+      "complete": "Complete"
+    },
+    "help": {
+      "title": "How Goals Work",
+      "intro": "Goals help track your progress: set a tournament count target and optionally a profit target.",
+      "create": "Creating Goals",
+      "createDesc": "Click 'Add Goal', set the number of tournaments and optionally a profit target in USD. Tracking starts automatically.",
+      "active": "Active Goals",
+      "activeDesc": "Active goals show progress: how many tournaments played and current profit. When conditions are met, click 'Complete'.",
+      "completed": "Completed Goals",
+      "completedDesc": "Completed goals can be viewed by expanding the section. They show statistics for the period."
     }
   },
   "license": {
@@ -573,6 +745,117 @@
     "weight": "Weight",
     "descriptionPlaceholder": "Description (shown in trainer)...",
     "selectFolder": "Select a folder",
-    "selectRangePrompt": "Select a folder and range to start training"
+    "selectRangePrompt": "Select a folder and range to start training",
+    "help": {
+      "title": "How to Use the Trainer",
+      "intro": "The matrix trainer helps you learn and memorize hand ranges for different game situations.",
+      "editor": "Matrix Editor",
+      "editorDesc": "Create and edit range matrices. Color cells to represent actions (raise, call, fold). You can create folders for organization.",
+      "trainer": "Training Mode",
+      "trainerDesc": "The trainer shows random hands — mark whether the hand is in the selected range. After answering, the correct result is shown. Train your range memorization!"
+    }
+  },
+  "equity": {
+    "page": { "title": "Odds Calculator" },
+    "tabs": {
+      "equity": "My Odds",
+      "potOdds": "Pot Odds",
+      "bounty": "Bounty",
+    "mystery": "Mystery Bounty",
+    "analysis": "Analysis"
+  },
+    "heroRange": "My Hand",
+    "villainRange": "Opponent's Hand",
+    "opponentRange": "Opponent's Range",
+    "hands": "hands",
+    "combos": "combos",
+    "probability": "probability",
+    "bb": "BB",
+    "bbSize": "BB Size",
+    "chips": "chips",
+    "inputs": "Pot & Call",
+    "result": "Result",
+    "potSize": "Pot",
+    "callAmount": "Call",
+    "yourEquity": "My Odds",
+    "bountyAmount": "Bounty",
+    "minBounty": "Min Bounty",
+    "maxBounty": "Max Bounty",
+    "potOdds": "Pot Odds",
+    "potOddsPercent": "Pot Odds (%)",
+    "requiredEquity": "Needed to Call",
+    "decision": "Decision",
+    "call": "Call",
+    "fold": "Fold",
+    "youHave": "Your Odds",
+    "youNeed": "Need to Put",
+    "minLabel": "min",
+    "maxLabel": "max",
+    "profitableCall": "Call is +EV — your odds are good enough",
+    "unprofitableCall": "Call is -EV — odds not high enough",
+    "potOddsDesc": "Put {{chips}} into a {{pot}} pot. You need at least {{required}}% equity",
+    "potOddsTip": "Odds {{ratio}} — you need at least {{required}}% equity to break even",
+    "standardPot": "Pot w/o Bounty",
+    "adjustedPot": "Pot w/ Bounty",
+    "bountyProfitable": "Call is +EV with bounty included",
+    "bountyUnprofitable": "Call is -EV with bounty included",
+    "avgBounty": "Avg Bounty",
+    "reqEquityRange": "Equity Needed",
+    "ev": "Expected Value",
+    "mysteryProfitable": "Call is +EV (expected: {{ev}})",
+    "mysteryUnprofitable": "Call is -EV (expected: {{ev}})",
+    "selectHeroCards": "Select your cards",
+    "boardCards": "Board",
+    "selectFlop": "Select board cards",
+    "turn": "Turn",
+    "river": "River",
+    "currentHand": "Current hand on board",
+    "drawToRiver": "Draw odds to river",
+    "boardResult": "Board Analysis",
+    "category": "Category",
+    "selectRangeAndBoard": "Select Hero range and board cards",
+    "equityVsRandom": "Hero equity vs random hand",
+    "calculatingEquity": "Calculating equity...",
+    "cat": {
+      "RoyalFlush": "Royal Flush",
+      "StraightFlush": "Straight Flush",
+      "Quads": "Quads",
+      "FullHouse": "Full House",
+      "Flush": "Flush",
+      "Straight": "Straight",
+      "Set": "Set",
+      "Trips": "Trips",
+      "TwoPair": "Two Pair",
+      "Overpair": "Overpair",
+      "TopPair": "Top Pair",
+      "MiddlePair": "Middle Pair",
+      "BottomPair": "Bottom Pair",
+      "Pair": "Pair",
+      "PairedBoard": "Paired Board",
+      "FlushDraw+OESD": "Flush Draw + OESD",
+      "FlushDraw+Gutshot": "Flush Draw + Gutshot",
+      "TwoOvercards+FlushDraw": "Two Overcards + Flush Draw",
+      "FlushDraw": "Flush Draw",
+      "BackdoorFlushDraw": "Backdoor Flush Draw",
+      "OESD": "OESD",
+      "Gutshot": "Gutshot",
+      "Overcards": "Overcards",
+      "OneOvercard": "One Overcard",
+      "Nothing": "Nothing"
+    },
+    "help": {
+      "title": "How It Works",
+      "intro": "This tool helps you decide whether to call your opponent's bet.",
+      "equity": "My Odds",
+      "equityDesc": "Pick your hand and your opponent's hand on the grid. Enter the pot and call amount. The calculator shows if your odds are good enough.",
+      "potOdds": "Pot Odds",
+      "potOddsDesc": "Simple ratio: how much to call vs the current pot. The smaller the call relative to the pot, the better.",
+      "bounty": "Bounty",
+      "bountyDesc": "If the tournament has a bounty on your opponent's head, it gets added to the pot. Bounties make calls more profitable.",
+      "mystery": "Mystery Bounty",
+      "mysteryDesc": "Bounty amounts can vary. Set the minimum and maximum — the calculator shows your equity range and expected value.",
+      "analysis": "Board Analysis",
+      "analysisDesc": "Select Hero's range and board cards (flop/turn/river). The calculator shows how your range hits the board — combos and percentages for pairs, draws, straights, etc."
+    }
   }
 }

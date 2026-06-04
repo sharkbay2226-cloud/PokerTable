@@ -1,4 +1,4 @@
-import type { Room, Tournament, Session, BankrollEntry, TrainingItem } from '../types';
+import type { Room, Tournament, Session, GameSession, BankrollEntry, TrainingItem, Currency, Goal } from '../types';
 
 const API = window.electronAPI?.apiBase ?? '/api';
 
@@ -39,8 +39,8 @@ async function deleteFromTable(table: string, id: string | number): Promise<void
 }
 
 // Rooms
-export async function addRoom(name: string): Promise<string> {
-  const room = await addToTable<Room>('rooms', { id: crypto.randomUUID(), name });
+export async function addRoom(name: string, defaultCurrency?: Currency): Promise<string> {
+  const room = await addToTable<Room>('rooms', { id: crypto.randomUUID(), name, defaultCurrency });
   return room.id;
 }
 
@@ -92,7 +92,38 @@ export function getAllSessions(): Promise<Session[]> {
   return getTable<Session>('sessions');
 }
 
-// Bankroll
+// Game Sessions
+export async function addGameSession(data: Omit<GameSession, 'id'>): Promise<number> {
+  const gs = await addToTable<GameSession>('gameSessions', data);
+  return gs.id;
+}
+
+export async function updateGameSession(id: number, data: Partial<GameSession>): Promise<void> {
+  await updateInTable<GameSession>('gameSessions', id, data);
+}
+
+export function getAllGameSessions(): Promise<GameSession[]> {
+  return getTable<GameSession>('gameSessions');
+}
+
+// Goals
+export async function addGoal(data: Omit<Goal, 'id'>): Promise<number> {
+  const g = await addToTable<Goal>('goals', data);
+  return g.id;
+}
+
+export async function updateGoal(id: number, data: Partial<Goal>): Promise<void> {
+  await updateInTable<Goal>('goals', id, data);
+}
+
+export function getAllGoals(): Promise<Goal[]> {
+  return getTable<Goal>('goals');
+}
+
+export async function deleteGoal(id: number): Promise<void> {
+  await deleteFromTable('goals', id);
+}
+
 export async function addBankrollEntry(data: Omit<BankrollEntry, 'id' | 'createdAt'>): Promise<number> {
   const entry = await addToTable<BankrollEntry>('bankroll', { ...data, createdAt: Date.now() });
   return entry.id;
@@ -123,6 +154,10 @@ export async function exportAllData(): Promise<string> {
 export async function clearAllSessions(): Promise<void> {
   const res = await fetch(`${API}/clear-sessions`, { method: 'POST' });
   if (!res.ok) throw new Error('Failed to clear sessions');
+  const gameSessions = await getTable<GameSession>('gameSessions');
+  await Promise.all(gameSessions.map(gs =>
+    fetch(`${API}/gameSessions/${gs.id}`, { method: 'DELETE' })
+  ));
 }
 
 export async function importAllData(json: string): Promise<void> {
@@ -151,4 +186,17 @@ export async function saveTrainingData(items: TrainingItem[]): Promise<void> {
     const text = await res.text().catch(() => '');
     throw new Error(`Status ${res.status}: ${text}`);
   }
+}
+
+export function getCustomTournamentTypes(): Promise<{ id: number; name: string }[]> {
+  return getTable('customTournamentTypes');
+}
+
+export async function addCustomTournamentType(name: string): Promise<{ id: number; name: string }> {
+  const item = await addToTable<{ id: number; name: string }>('customTournamentTypes', { name } as any);
+  return item;
+}
+
+export async function deleteCustomTournamentType(id: number): Promise<void> {
+  await deleteFromTable('customTournamentTypes', id);
 }

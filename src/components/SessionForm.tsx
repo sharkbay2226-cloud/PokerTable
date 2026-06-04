@@ -25,6 +25,7 @@ export default function SessionForm({ onSuccess }: Props) {
   const [loading, setLoading] = useState(false);
   const [backing, setBacking] = useState(true);
   const [selectedBackerId, setSelectedBackerId] = useState<string>(backers[0]?.id || '');
+  const [selectedColor, setSelectedColor] = useState<string | undefined>(undefined);
 
   useEffect(() => {
     Promise.all([getAllTournaments(), getAllRooms()]).then(([t, r]) => {
@@ -38,8 +39,11 @@ export default function SessionForm({ onSuccess }: Props) {
     if (selectedRoomId) {
       list = list.filter((t) => t.roomId === selectedRoomId);
     }
+    if (selectedColor) {
+      list = list.filter((t) => t.color === selectedColor);
+    }
     return list.sort((a, b) => a.name.localeCompare(b.name));
-  }, [allTournaments, selectedRoomId]);
+  }, [allTournaments, selectedRoomId, selectedColor]);
 
   const sortedRooms = useMemo(() => {
     return [...rooms].sort((a, b) => a.name.localeCompare(b.name));
@@ -49,6 +53,7 @@ export default function SessionForm({ onSuccess }: Props) {
     setSelectedRoomId(roomId);
     form.setFieldValue('tournamentId', undefined);
     setSelectedTour(null);
+    setSelectedColor(undefined);
   };
 
   const handleTournamentChange = (tournamentId: string) => {
@@ -59,17 +64,20 @@ export default function SessionForm({ onSuccess }: Props) {
   const handleSubmit = async (values: { tournamentId: string; date: dayjs.Dayjs }) => {
     setLoading(true);
     try {
+      const storedId = localStorage.getItem('poker-diary-current-session-id');
       await addSession({
         tournamentId: values.tournamentId,
         date: values.date.format('YYYY-MM-DD'),
-        inPrize: true,
+        inPrize: false,
         backing,
         backerId: backing ? selectedBackerId : undefined,
         place: 0,
         prize: 0,
-        prizeCurrency: 'USD',
+        prizeCurrency: selectedTour?.currency || 'USD',
         bountySum: 0,
-        bountyCurrency: 'USD',
+        bountyCurrency: selectedTour?.currency || 'USD',
+        sessionId: storedId ? Number(storedId) : undefined,
+        createdAt: new Date().toISOString(),
       });
       form.resetFields();
       setSelectedRoomId(undefined);
@@ -131,7 +139,9 @@ export default function SessionForm({ onSuccess }: Props) {
             {filteredTournaments.map((t) => (
               <Select.Option key={t.id} value={t.id} label={`${t.name} (${t.buyIn} ${t.currency})`}>
                 <Space>
+                  {t.color && <div style={{ width: 10, height: 10, borderRadius: '50%', background: t.color, display: 'inline-block' }} />}
                   <strong>{t.name}</strong>
+                  {t.type && <span style={{ fontSize: 11, color: '#d4a843' }}>{t.type}</span>}
                   <Text type="secondary">Buy-in: {t.buyIn} {t.currency}</Text>
                 </Space>
               </Select.Option>
@@ -144,15 +154,40 @@ export default function SessionForm({ onSuccess }: Props) {
             <Space direction="vertical" size={2}>
               <Text>{t('sessionForm.info.room')} <strong>{rooms.find((r) => r.id === selectedTour.roomId)?.name}</strong></Text>
               <Text>{t('sessionForm.info.tournament')} <strong>{selectedTour.name}</strong></Text>
+              {selectedTour.type && <Text>Тип: <strong style={{ color: '#d4a843' }}>{selectedTour.type}</strong></Text>}
               <Text>{t('sessionForm.info.buyIn')} <strong style={{ color: '#ff4d4f' }}>{selectedTour.buyIn} {selectedTour.currency}</strong></Text>
               <Text>{t('sessionForm.info.buyInRub')} <strong style={{ color: '#ff4d4f' }}>{formatRub(buyInRub)}</strong></Text>
             </Space>
           </Card>
         )}
 
-        <Form.Item label={t('sessionForm.backing.label')}>
-          <Switch checkedChildren={t('sessionForm.backing.yes')} unCheckedChildren={t('sessionForm.backing.no')} checked={backing} onChange={(v) => { setBacking(v); if (v && !selectedBackerId) setSelectedBackerId(backers[0]?.id || ''); }} />
-        </Form.Item>
+        <Space size={16} wrap>
+          <Form.Item label={t('sessionForm.backing.label')} style={{ marginBottom: 0 }}>
+            <Switch checkedChildren={t('sessionForm.backing.yes')} unCheckedChildren={t('sessionForm.backing.no')} checked={backing} onChange={(v) => { setBacking(v); if (v && !selectedBackerId) setSelectedBackerId(backers[0]?.id || ''); }} />
+          </Form.Item>
+          <Form.Item label={t('sessionForm.colorFilter')} style={{ marginBottom: 0 }}>
+            <Select
+              allowClear
+              placeholder={t('sessionForm.colorFilterPlaceholder')}
+              style={{ width: 140 }}
+              value={selectedColor}
+              onChange={(v) => { setSelectedColor(v); form.setFieldValue('tournamentId', undefined); setSelectedTour(null); }}
+            >
+              <Select.Option value="#ef4444">
+                <Space size={4}><div style={{ width: 10, height: 10, borderRadius: '50%', background: '#ef4444', display: 'inline-block' }} />Hard</Space>
+              </Select.Option>
+              <Select.Option value="#eab308">
+                <Space size={4}><div style={{ width: 10, height: 10, borderRadius: '50%', background: '#eab308', display: 'inline-block' }} />Medium</Space>
+              </Select.Option>
+              <Select.Option value="#22c55e">
+                <Space size={4}><div style={{ width: 10, height: 10, borderRadius: '50%', background: '#22c55e', display: 'inline-block' }} />High</Space>
+              </Select.Option>
+              <Select.Option value="#3b82f6">
+                <Space size={4}><div style={{ width: 10, height: 10, borderRadius: '50%', background: '#3b82f6', display: 'inline-block' }} />Top</Space>
+              </Select.Option>
+            </Select>
+          </Form.Item>
+        </Space>
 
         {backing && backers.length > 1 && (
           <Form.Item label={t('sessionForm.backing.backerSelect')}>
@@ -172,7 +207,7 @@ export default function SessionForm({ onSuccess }: Props) {
 
         {selectedTour && (
           <Card size="small" style={{ marginTop: 12, background: 'linear-gradient(135deg, #0f172a, #1e293b)' }}>
-            <Text strong style={{ fontSize: 16, color: profitRub >= 0 ? '#52c41a' : '#ff4d4f' }}>
+            <Text strong style={{ fontSize: 16, color: profitRub >= 0 ? 'var(--color-profit)' : 'var(--color-loss)' }}>
               {t('sessionForm.info.total')} ${profitUsd.toFixed(2)} | {profitRub >= 0 ? '+' : ''}{formatRub(profitRub)}
             </Text>
           </Card>

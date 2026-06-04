@@ -2,6 +2,8 @@ const { app, BrowserWindow, ipcMain, shell, dialog, Menu } = require('electron')
 const path = require('path');
 const { fork } = require('child_process');
 const { autoUpdater } = require('electron-updater');
+const crypto = require('crypto');
+const fs = require('fs');
 const license = require('./license.cjs');
 
 let serverProcess = null;
@@ -16,6 +18,31 @@ function startServer() {
   });
   serverProcess.stdout?.on('data', (d) => process.stdout.write('[server] ' + d));
   serverProcess.stderr?.on('data', (d) => process.stderr.write('[server] ' + d));
+}
+
+function checkIntegrity() {
+  if (isDev) return;
+  try {
+    const expected = require('./integrity.cjs');
+    const checks = [
+      { name: 'main', filePath: __filename },
+      { name: 'server', filePath: path.join(__dirname, '..', 'server', 'index.js') },
+    ];
+    for (const { name, filePath } of checks) {
+      if (!expected[name]) continue;
+      const code = fs.readFileSync(filePath, 'utf-8');
+      const hash = crypto.createHash('sha256').update(code).digest('hex');
+      if (hash !== expected[name]) {
+        console.error(`[integrity] ${name}: HASH MISMATCH — file may be tampered`);
+        console.error(`[integrity]   expected: ${expected[name]}`);
+        console.error(`[integrity]   actual:   ${hash}`);
+      } else {
+        console.log(`[integrity] ${name}: OK`);
+      }
+    }
+  } catch (e) {
+    console.warn('[integrity] Check failed:', e.message);
+  }
 }
 
 function createWindow() {
@@ -46,7 +73,7 @@ function startRevalidation(win) {
   const CHECK_MS = 60 * 60 * 1000;
   revalidateTimer = setInterval(async () => {
     await license.revalidateIfNeeded();
-    const status = license.getLicenseStatus();
+    const status = await license.getLicenseStatus();
     if (status.status === 'expired' && status.reason !== 'trial_ended' && status.reason !== 'license_expired') {
       win.webContents.send('license:revoked', status);
     }
@@ -70,8 +97,8 @@ autoUpdater.on('error', (err) => {
   console.error('[autoUpdater]', err.message);
 });
 
-ipcMain.handle('license:getStatus', () => {
-  return license.getLicenseStatus();
+ipcMain.handle('license:getStatus', async () => {
+  return await license.getLicenseStatus();
 });
 
 ipcMain.handle('license:activateKey', (_e, key) => {
@@ -92,11 +119,12 @@ ipcMain.handle('license:openPurchase', () => {
 
 ipcMain.handle('license:revalidate', async () => {
   await license.revalidateIfNeeded();
-  return license.getLicenseStatus();
+  return await license.getLicenseStatus();
 });
 
 app.whenReady().then(() => {
   Menu.setApplicationMenu(null);
+  checkIntegrity();
   startServer();
   createWindow();
   if (!isDev) {

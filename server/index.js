@@ -8,14 +8,18 @@ const DB_PATH = process.env.USER_DATA_DIR
   ? join(process.env.USER_DATA_DIR, 'db.json')
   : join(__dirname, 'db.json');
 
-const DEFAULT_DATA = { rooms: [], tournaments: [], sessions: [], bankroll: [], training: [] };
+const DEFAULT_DATA = { rooms: [], tournaments: [], sessions: [], bankroll: [], training: [], gameSessions: [], goals: [], customTournamentTypes: [] };
 
 function readDb() {
   if (!existsSync(DB_PATH)) {
     writeFileSync(DB_PATH, JSON.stringify(DEFAULT_DATA, null, 2));
-    return DEFAULT_DATA;
+    return { ...DEFAULT_DATA };
   }
-  return JSON.parse(readFileSync(DB_PATH, 'utf-8'));
+  const raw = JSON.parse(readFileSync(DB_PATH, 'utf-8'));
+  for (const key of Object.keys(DEFAULT_DATA)) {
+    if (!(key in raw)) raw[key] = [];
+  }
+  return raw;
 }
 
 function writeDb(data) {
@@ -57,6 +61,9 @@ const TABLE_MAP = {
   tournaments: { keyField: 'id' },
   sessions: { keyField: 'id' },
   bankroll: { keyField: 'id' },
+  gameSessions: { keyField: 'id' },
+  goals: { keyField: 'id' },
+  customTournamentTypes: { keyField: 'id' },
 };
 
 async function handler(req, res) {
@@ -101,6 +108,7 @@ async function handler(req, res) {
   if (req.method === 'POST' && parts[0] === 'clear-sessions') {
     const db = readDb();
     db.sessions = [];
+    db.gameSessions = [];
     db.bankroll = [];
     writeDb(db);
     send(res, 200, { ok: true });
@@ -147,7 +155,7 @@ async function handler(req, res) {
       // POST /api/:table
       const body = await parseBody(req);
       if (!body[key]) {
-        if (table === 'sessions' || table === 'bankroll') {
+        if (table === 'sessions' || table === 'bankroll' || table === 'gameSessions' || table === 'goals') {
           body[key] = db[table].length > 0 ? Math.max(...db[table].map(r => Number(r[key]))) + 1 : 1;
         } else {
           body[key] = crypto.randomUUID();

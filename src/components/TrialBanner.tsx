@@ -33,7 +33,7 @@ export default function TrialBanner({ daysLeft, grace }: Props) {
     return (
       <>
         <Alert type="warning" showIcon message={t('license.graceMessage')} action={bannerAction} banner closable />
-        <Modal open={modalOpen} onCancel={() => setModalOpen(false)} footer={null} width={480} title={t('license.activateTitle')} destroyOnClose>
+        <Modal open={modalOpen} onCancel={() => setModalOpen(false)} footer={null} width={480} title={t('license.activateTitle')} destroyOnHidden>
           <ActivationForm onActivated={handleActivated} compact />
         </Modal>
       </>
@@ -48,7 +48,7 @@ export default function TrialBanner({ daysLeft, grace }: Props) {
   return (
     <>
       <Alert type={isUrgent ? 'warning' : 'info'} showIcon message={message} action={bannerAction} banner closable />
-      <Modal open={modalOpen} onCancel={() => setModalOpen(false)} footer={null} width={480} title={t('license.activateTitle')} destroyOnClose>
+      <Modal open={modalOpen} onCancel={() => setModalOpen(false)} footer={null} width={480} title={t('license.activateTitle')} destroyOnHidden>
         <ActivationForm onActivated={handleActivated} compact />
       </Modal>
     </>

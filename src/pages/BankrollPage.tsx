@@ -1,7 +1,8 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, Row, Col, Statistic, Table, Modal, Input, InputNumber, Button, Space, Typography, Tag, Empty, Popconfirm, message, Tooltip, Select } from 'antd';
-import { PlusOutlined, MinusOutlined, WalletOutlined, DeleteOutlined, TrophyOutlined, DollarOutlined, ReloadOutlined } from '@ant-design/icons';
+import { Card, Row, Col, Statistic, Table, Modal, Input, InputNumber, Button, Space, Typography, Tag, Popconfirm, message, Tooltip, Select } from 'antd';
+import PokerEmpty from '../components/PokerEmpty';
+import { PlusOutlined, MinusOutlined, WalletOutlined, DeleteOutlined, TrophyOutlined, DollarOutlined, ReloadOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
 import { getAllRooms, getAllSessions, getAllTournaments, getAllBankrollEntries, addBankrollEntry, deleteBankrollEntry } from '../db/db';
 import type { Room, BankrollEntry, Currency } from '../types';
@@ -29,6 +30,8 @@ export default function BankrollPage() {
   const [comment, setComment] = useState('');
   const [saving, setSaving] = useState(false);
   const [roomFilter, setRoomFilter] = useState<string[]>([]);
+  const [globalCurrency, setGlobalCurrency] = useState<Currency>('USD');
+  const [helpOpen, setHelpOpen] = useState(false);
 
   const load = async () => {
     const [r, s, t, e] = await Promise.all([getAllRooms(), getAllSessions(), getAllTournaments(), getAllBankrollEntries()]);
@@ -139,6 +142,26 @@ export default function BankrollPage() {
   const totalBalanceRub = useMemo(() => roomStats.reduce((s, r) => s + r.balanceRub, 0), [roomStats]);
   const totalBalanceEur = useMemo(() => roomStats.reduce((s, r) => s + r.balanceEur, 0), [roomStats]);
 
+  const totalProfitCur = useMemo(() => {
+    if (globalCurrency === 'USD') return totalProfitUsd;
+    if (globalCurrency === 'EUR') return totalProfitEur;
+    return totalProfitRub;
+  }, [globalCurrency, totalProfitUsd, totalProfitEur, totalProfitRub]);
+
+  const totalBalanceCur = useMemo(() => {
+    if (globalCurrency === 'USD') return totalBalance;
+    if (globalCurrency === 'EUR') return totalBalanceEur;
+    return totalBalanceRub;
+  }, [globalCurrency, totalBalance, totalBalanceEur, totalBalanceRub]);
+
+  const totalManualCur = useMemo(() => {
+    if (globalCurrency === 'USD') return totalManual;
+    if (globalCurrency === 'EUR') return totalManual * settings.usdToRub / settings.eurToRub;
+    return totalManual * settings.usdToRub;
+  }, [globalCurrency, totalManual, settings]);
+
+  const currencySuffix = globalCurrency === 'USD' ? '$' : globalCurrency === 'EUR' ? '€' : '₽';
+
   const openModal = (roomId: string, type: 'add' | 'subtract') => {
     setModalRoomId(roomId);
     setModalType(type);
@@ -171,10 +194,28 @@ export default function BankrollPage() {
 
   return (
     <div>
-      <Title level={3} style={{ marginBottom: 24 }}>{t('bankroll.page.title')}</Title>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 24 }}>
+        <Space>
+          <Title level={3} style={{ margin: 0 }}>{t('bankroll.page.title')}</Title>
+          <Button type="text" icon={<QuestionCircleOutlined style={{ color: 'var(--color-accent)', fontSize: 18 }} />} onClick={() => setHelpOpen(true)} />
+        </Space>
+        <Space>
+          {(['USD', 'EUR', 'RUB'] as Currency[]).map((cur) => (
+            <Button
+              key={cur}
+              size="small"
+              type={globalCurrency === cur ? 'primary' : 'default'}
+              onClick={() => setGlobalCurrency(cur)}
+              style={globalCurrency === cur ? { fontWeight: 700 } : { opacity: 0.6 }}
+            >
+              {cur}
+            </Button>
+          ))}
+        </Space>
+      </div>
 
       {/* Курсы валют */}
-      <Card size="small" style={{ marginBottom: 16, background: '#1e293b', border: '1px solid #334155' }}>
+      <Card size="small" style={{ marginBottom: 16 }}>
         <Row align="middle" justify="space-between">
           <Col>
             <Space size={24}>
@@ -236,32 +277,32 @@ export default function BankrollPage() {
       {/* Summary cards */}
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={8}>
-          <Card hoverable style={{ background: 'linear-gradient(135deg, #3b82f620, #3b82f608)', border: '1px solid #3b82f640', height: '100%' }}>
-            <Statistic title={t('bankroll.stats.total')} value={totalBalance} precision={2} valueStyle={{ color: totalBalance >= 0 ? '#52c41a' : '#ff4d4f', fontSize: 22 }} suffix="$" prefix={<WalletOutlined />} />
+          <Card hoverable className="stat-card" style={{ height: '100%' }}>
+            <Statistic title={t('bankroll.stats.total')} value={totalBalanceCur} precision={2} valueStyle={{ color: totalBalanceCur >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', fontSize: 22 }} suffix={currencySuffix} prefix={<WalletOutlined />} />
             <div style={{ marginTop: 4, fontSize: 13, opacity: 0.7 }}>
-              <span style={{ color: totalBalanceRub >= 0 ? '#52c41a' : '#ff4d4f' }}>{totalBalanceRub.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽</span>
+              <span style={{ color: totalBalanceRub >= 0 ? 'var(--color-profit)' : 'var(--color-loss)' }}>{totalBalanceRub.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽</span>
               &nbsp;·&nbsp;
-              <span style={{ color: totalBalanceEur >= 0 ? '#52c41a' : '#ff4d4f' }}>{totalBalanceEur.toFixed(2)} €</span>
+              <span style={{ color: totalBalanceEur >= 0 ? 'var(--color-profit)' : 'var(--color-loss)' }}>{totalBalanceEur.toFixed(2)} €</span>
             </div>
           </Card>
         </Col>
         <Col xs={24} sm={8}>
-          <Card hoverable style={{ background: 'linear-gradient(135deg, #3b82f620, #3b82f608)', border: '1px solid #3b82f640', height: '100%' }}>
-            <Statistic title={t('bankroll.stats.profit')} value={totalProfitUsd} precision={2} valueStyle={{ color: totalProfitUsd >= 0 ? '#52c41a' : '#ff4d4f', fontSize: 22 }} suffix="$" prefix={<TrophyOutlined />} />
+          <Card hoverable className="stat-card" style={{ height: '100%' }}>
+            <Statistic title={t('bankroll.stats.profit')} value={totalProfitCur} precision={2} valueStyle={{ color: totalProfitCur >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', fontSize: 22 }} suffix={currencySuffix} prefix={<TrophyOutlined />} />
             <div style={{ marginTop: 4, fontSize: 13, opacity: 0.7 }}>
-              <span style={{ color: totalProfitRub >= 0 ? '#52c41a' : '#ff4d4f' }}>{totalProfitRub.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽</span>
+              <span style={{ color: totalProfitRub >= 0 ? 'var(--color-profit)' : 'var(--color-loss)' }}>{totalProfitRub.toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽</span>
               &nbsp;·&nbsp;
-              <span style={{ color: totalProfitEur >= 0 ? '#52c41a' : '#ff4d4f' }}>{totalProfitEur.toFixed(2)} €</span>
+              <span style={{ color: totalProfitEur >= 0 ? 'var(--color-profit)' : 'var(--color-loss)' }}>{totalProfitEur.toFixed(2)} €</span>
             </div>
           </Card>
         </Col>
         <Col xs={24} sm={8}>
-          <Card hoverable style={{ background: 'linear-gradient(135deg, #3b82f620, #3b82f608)', border: '1px solid #3b82f640', height: '100%' }}>
-            <Statistic title={t('bankroll.stats.manual')} value={totalManual} precision={2} valueStyle={{ color: totalManual >= 0 ? '#52c41a' : '#ff4d4f', fontSize: 22 }} suffix="$" prefix={<DollarOutlined />} />
+          <Card hoverable className="stat-card" style={{ height: '100%' }}>
+            <Statistic title={t('bankroll.stats.manual')} value={totalManualCur} precision={2} valueStyle={{ color: totalManualCur >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', fontSize: 22 }} suffix={currencySuffix} prefix={<DollarOutlined />} />
             <div style={{ marginTop: 4, fontSize: 13, opacity: 0.7 }}>
-              <span style={{ color: totalManual >= 0 ? '#52c41a' : '#ff4d4f' }}>{(totalManual * settings.usdToRub).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽</span>
+              <span style={{ color: totalManual >= 0 ? 'var(--color-profit)' : 'var(--color-loss)' }}>{(totalManual * settings.usdToRub).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽</span>
               &nbsp;·&nbsp;
-              <span style={{ color: totalManual >= 0 ? '#52c41a' : '#ff4d4f' }}>{(totalManual * settings.usdToRub / settings.eurToRub).toFixed(2)} €</span>
+              <span style={{ color: totalManual >= 0 ? 'var(--color-profit)' : 'var(--color-loss)' }}>{(totalManual * settings.usdToRub / settings.eurToRub).toFixed(2)} €</span>
             </div>
           </Card>
         </Col>
@@ -272,7 +313,7 @@ export default function BankrollPage() {
         {roomStats.map((room) => (
           <Col key={room.id} xs={24} sm={12} lg={8} xl={6}>
             <Card
-              style={{ background: '#1e293b', border: '1px solid #3b82f620', borderRadius: 8, height: '100%' }}
+              style={{ height: '100%' }}
               title={
                 <Space>
                   <WalletOutlined style={{ color: '#3b82f6' }} />
@@ -291,60 +332,35 @@ export default function BankrollPage() {
               <div style={{ display: 'flex', gap: 32, justifyContent: 'center', marginBottom: 12 }}>
                 <div style={{ textAlign: 'center' }}>
                   <Text type="secondary" style={{ fontSize: 13, display: 'block', marginBottom: 4 }}>{t('bankroll.stats.profitLabel')}</Text>
-                  {(['USD', 'EUR', 'RUB'] as Currency[]).map((cur) => {
-                    const active = getRoomCurrency(room.id) === cur;
+                  {(() => {
+                    const cur = getRoomCurrency(room.id);
                     const val = cur === 'USD' ? room.profitUsd : cur === 'EUR' ? room.profitEur : room.profitRub;
                     const sign = val >= 0 ? '+' : '';
-                    const color = val >= 0 ? '#52c41a' : '#ff4d4f';
+                    const color = val >= 0 ? 'var(--color-profit)' : 'var(--color-loss)';
                     const formatted = cur === 'RUB'
                       ? `${sign}${Math.abs(val).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽`
                       : `${sign}${Math.abs(val).toFixed(2)} ${cur === 'EUR' ? '€' : '$'}`;
-                    return active ? (
-                      <div key={cur} style={{ fontSize: 16, fontWeight: 700, color }}>{formatted}</div>
-                    ) : (
-                      <div key={cur} style={{ fontSize: 11, opacity: 0.35, color }}>{formatted}</div>
-                    );
-                  })}
+                    return <div style={{ fontSize: 16, fontWeight: 700, color }}>{formatted}</div>;
+                  })()}
                 </div>
                 <div style={{ textAlign: 'center' }}>
                   <Text type="secondary" style={{ fontSize: 13, display: 'block', marginBottom: 4 }}>{t('bankroll.stats.balance')}</Text>
-                  {(['USD', 'EUR', 'RUB'] as Currency[]).map((cur) => {
-                    const active = getRoomCurrency(room.id) === cur;
+                  {(() => {
+                    const cur = getRoomCurrency(room.id);
                     const val = cur === 'USD' ? room.totalBalance : cur === 'EUR' ? room.balanceEur : room.balanceRub;
                     const sign = val >= 0 ? '+' : '';
-                    const color = val >= 0 ? '#52c41a' : '#ff4d4f';
+                    const color = val >= 0 ? 'var(--color-profit)' : 'var(--color-loss)';
                     const formatted = cur === 'RUB'
                       ? `${sign}${Math.abs(val).toLocaleString('ru-RU', { maximumFractionDigits: 0 })} ₽`
                       : `${sign}${Math.abs(val).toFixed(2)} ${cur === 'EUR' ? '€' : '$'}`;
-                    return active ? (
-                      <div key={cur} style={{ fontSize: 16, fontWeight: 700, color }}>{formatted}</div>
-                    ) : (
-                      <div key={cur} style={{ fontSize: 11, opacity: 0.35, color }}>{formatted}</div>
-                    );
-                  })}
+                    return <div style={{ fontSize: 16, fontWeight: 700, color }}>{formatted}</div>;
+                  })()}
                 </div>
               </div>
 
               {room.entries.length === 0 && room.tournamentsPlayed === 0 && (
-                <Empty description={t('bankroll.page.noData')} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+                <PokerEmpty description={t('bankroll.page.noData')} icon="chips" />
               )}
-
-              <div style={{ display: 'flex', justifyContent: 'center', gap: 4, marginTop: 12 }}>
-                {(['USD', 'EUR', 'RUB'] as Currency[]).map((cur) => {
-                    const active = getRoomCurrency(room.id) === cur;
-                  return (
-                    <Button
-                      key={cur}
-                      size="small"
-                      type={active ? 'primary' : 'text'}
-                      style={active ? { fontWeight: 700, fontSize: 14, background: '#3b82f6', borderColor: '#3b82f6', color: '#e2e8f0' } : { fontSize: 11, opacity: 0.5 }}
-                      onClick={() => setSettings({ roomDisplayCurrency: { ...settings.roomDisplayCurrency, [room.id]: cur } })}
-                    >
-                      {cur}
-                    </Button>
-                  );
-                })}
-              </div>
             </Card>
           </Col>
         ))}
@@ -386,6 +402,27 @@ export default function BankrollPage() {
             <Input value={comment} onChange={(e) => setComment(e.target.value)} placeholder={t('bankroll.card.commentPlaceholder')} />
           </div>
         </Space>
+      </Modal>
+      <Modal title={<span style={{ color: 'var(--color-accent)' }}>{t('bankroll.help.title')}</span>} open={helpOpen} onCancel={() => setHelpOpen(false)} footer={null} width={520}>
+        <Typography.Paragraph>
+          {t('bankroll.help.intro')}
+        </Typography.Paragraph>
+        <Typography.Paragraph>
+          <span style={{ color: 'var(--color-accent)', fontWeight: 'bold' }}>{t('bankroll.help.cards.title')}</span><br />
+          {t('bankroll.help.cards.content')}
+        </Typography.Paragraph>
+        <Typography.Paragraph>
+          <span style={{ color: 'var(--color-accent)', fontWeight: 'bold' }}>{t('bankroll.help.rooms.title')}</span><br />
+          {t('bankroll.help.rooms.content')}
+        </Typography.Paragraph>
+        <Typography.Paragraph>
+          <span style={{ color: 'var(--color-accent)', fontWeight: 'bold' }}>{t('bankroll.help.manual.title')}</span><br />
+          {t('bankroll.help.manual.content')}
+        </Typography.Paragraph>
+        <Typography.Paragraph>
+          <span style={{ color: 'var(--color-accent)', fontWeight: 'bold' }}>{t('bankroll.help.history.title')}</span><br />
+          {t('bankroll.help.history.content')}
+        </Typography.Paragraph>
       </Modal>
     </div>
   );

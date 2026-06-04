@@ -17,6 +17,7 @@ export function refCommand(bot) {
       `📊 <b>Статистика:</b>`,
       `   — Всего выплат: ${stats.total}`,
       `   — Ожидают: ${stats.pending}`,
+      stats.usdtBalance > 0 ? `   — USDT баланс: $${stats.usdtBalance.toFixed(2)}` : '',
       '',
       `💰 <b>Награда:</b> ${REFERRAL_PERCENT}% от суммы покупки`,
       '',

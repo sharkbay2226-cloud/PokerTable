@@ -1,6 +1,6 @@
 import { useTranslation, Trans } from 'react-i18next';
 import { Typography, Collapse, Button, Space, message, Modal } from 'antd';
-import { InfoCircleOutlined, DownloadOutlined, UploadOutlined, DeleteOutlined, FileExcelOutlined, HomeOutlined, TrophyOutlined, PlayCircleOutlined, CheckCircleOutlined, WalletOutlined, BarChartOutlined, DollarOutlined, TeamOutlined, SwapOutlined, ExperimentOutlined, DatabaseOutlined } from '@ant-design/icons';
+import { InfoCircleOutlined, DownloadOutlined, UploadOutlined, DeleteOutlined, FileExcelOutlined, HomeOutlined, TrophyOutlined, PlayCircleOutlined, CheckCircleOutlined, WalletOutlined, BarChartOutlined, DollarOutlined, TeamOutlined, SwapOutlined, ExperimentOutlined, DatabaseOutlined, FlagOutlined, SafetyCertificateOutlined, SunOutlined, MenuOutlined } from '@ant-design/icons';
 import * as XLSX from 'xlsx';
 import { exportAllData, importAllData, clearAllSessions, getAllRooms, getAllTournaments, getAllSessions, getAllBankrollEntries } from '../db/db';
 
@@ -120,8 +120,8 @@ export default function FaqPage() {
 
   return (
     <div style={{ maxWidth: 700, margin: '0 auto', textAlign: 'center' }}>
-      <Title level={3} style={{ marginBottom: 24, color: '#d4a843' }}>
-        <InfoCircleOutlined style={{ color: '#d4a843' }} /> {t('faq.page.title')}
+      <Title level={3} style={{ marginBottom: 24, color: 'var(--color-accent)' }}>
+        <InfoCircleOutlined style={{ color: 'var(--color-accent)' }} /> {t('faq.page.title')}
       </Title>
 
       <Collapse
@@ -131,44 +131,8 @@ export default function FaqPage() {
         expandIconPosition="end"
         items={[
           {
-            key: '1',
-            label: <Space style={{ color: '#d4a843' }}><HomeOutlined />{t('faq.room.label')}</Space>,
-            children: (
-              <Paragraph>
-                {t('faq.room.content')}
-              </Paragraph>
-            ),
-          },
-          {
-            key: '2',
-            label: <Space style={{ color: '#d4a843' }}><TrophyOutlined />{t('faq.tournament.label')}</Space>,
-            children: (
-              <Paragraph>
-                {t('faq.tournament.content')}
-              </Paragraph>
-            ),
-          },
-          {
-            key: '3',
-            label: <Space style={{ color: '#d4a843' }}><PlayCircleOutlined />{t('faq.session.label')}</Space>,
-            children: (
-              <Paragraph>
-                {t('faq.session.content')}
-              </Paragraph>
-            ),
-          },
-          {
-            key: '4',
-            label: <Space style={{ color: '#d4a843' }}><CheckCircleOutlined />{t('faq.finish.label')}</Space>,
-            children: (
-              <Paragraph>
-                {t('faq.finish.content')}
-              </Paragraph>
-            ),
-          },
-          {
             key: '5',
-            label: <Space style={{ color: '#d4a843' }}><WalletOutlined />{t('faq.bankroll.label')}</Space>,
+            label: <Space style={{ color: 'var(--color-accent)' }}><WalletOutlined />{t('faq.bankroll.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.bankroll.content')}
@@ -176,33 +140,8 @@ export default function FaqPage() {
             ),
           },
           {
-            key: '6',
-            label: <Space style={{ color: '#d4a843' }}><BarChartOutlined />{t('faq.reports.label')}</Space>,
-            children: (
-              <Paragraph>
-                {t('faq.reports.intro')}
-                <ul>
-                  <li><b>{t('faq.reports.list.profitByRoom')}</b> — {t('faq.reports.list.profitByRoomDesc')}</li>
-                  <li><b>{t('faq.reports.list.profitByTournament')}</b> — {t('faq.reports.list.profitByTournamentDesc')}</li>
-                  <li><b>{t('faq.reports.list.bankroll')}</b> — {t('faq.reports.list.bankrollDesc')}</li>
-                  <li><b>{t('faq.reports.list.expenses')}</b> — {t('faq.reports.list.expensesDesc')}</li>
-                </ul>
-                {t('faq.reports.footer')}
-              </Paragraph>
-            ),
-          },
-          {
-            key: '7',
-            label: <Space style={{ color: '#d4a843' }}><DollarOutlined />{t('faq.currencies.label')}</Space>,
-            children: (
-              <Paragraph>
-                {t('faq.currencies.content')}
-              </Paragraph>
-            ),
-          },
-          {
             key: '9',
-            label: <Space style={{ color: '#d4a843' }}><TeamOutlined />{t('faq.backing.label')}</Space>,
+            label: <Space style={{ color: 'var(--color-accent)' }}><TeamOutlined />{t('faq.backing.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.backing.intro')}
@@ -217,8 +156,17 @@ export default function FaqPage() {
             ),
           },
           {
+            key: '7',
+            label: <Space style={{ color: 'var(--color-accent)' }}><DollarOutlined />{t('faq.currencies.label')}</Space>,
+            children: (
+              <Paragraph>
+                {t('faq.currencies.content')}
+              </Paragraph>
+            ),
+          },
+          {
             key: '10',
-            label: <Space style={{ color: '#d4a843' }}><SwapOutlined />{t('faq.movements.label')}</Space>,
+            label: <Space style={{ color: 'var(--color-accent)' }}><SwapOutlined />{t('faq.movements.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.movements.intro')}
@@ -231,8 +179,53 @@ export default function FaqPage() {
             ),
           },
           {
+            key: '16',
+            label: <Space style={{ color: 'var(--color-accent)' }}><FileExcelOutlined />{t('faq.excel.label')}</Space>,
+            children: (
+              <Paragraph>
+                {t('faq.excel.content')}
+              </Paragraph>
+            ),
+          },
+          {
+            key: '4',
+            label: <Space style={{ color: 'var(--color-accent)' }}><CheckCircleOutlined />{t('faq.finish.label')}</Space>,
+            children: (
+              <Paragraph>
+                {t('faq.finish.content')}
+              </Paragraph>
+            ),
+          },
+          {
+            key: '3',
+            label: <Space style={{ color: 'var(--color-accent)' }}><PlayCircleOutlined />{t('faq.session.label')}</Space>,
+            children: (
+              <Paragraph>
+                {t('faq.session.content')}
+              </Paragraph>
+            ),
+          },
+          {
+            key: '15',
+            label: <Space style={{ color: 'var(--color-accent)' }}><MenuOutlined />{t('faq.menuOrder.label')}</Space>,
+            children: (
+              <Paragraph>
+                {t('faq.menuOrder.content')}
+              </Paragraph>
+            ),
+          },
+          {
+            key: '13',
+            label: <Space style={{ color: 'var(--color-accent)' }}><SafetyCertificateOutlined />{t('faq.license.label')}</Space>,
+            children: (
+              <Paragraph>
+                {t('faq.license.content')}
+              </Paragraph>
+            ),
+          },
+          {
             key: '11',
-            label: <Space style={{ color: '#d4a843' }}><ExperimentOutlined />{t('faq.training.label')}</Space>,
+            label: <Space style={{ color: 'var(--color-accent)' }}><ExperimentOutlined />{t('faq.training.label')}</Space>,
             children: (
               <Paragraph>
                 {t('faq.training.content')}
@@ -240,18 +233,28 @@ export default function FaqPage() {
             ),
           },
           {
+            key: '6',
+            label: <Space style={{ color: 'var(--color-accent)' }}><BarChartOutlined />{t('faq.reports.label')}</Space>,
+            children: (
+              <Paragraph>
+                {t('faq.reports.intro')}
+                <ul>
+                  <li><b>{t('faq.reports.list.profitByRoom')}</b> — {t('faq.reports.list.profitByRoomDesc')}</li>
+                  <li><b>{t('faq.reports.list.profitByTournament')}</b> — {t('faq.reports.list.profitByTournamentDesc')}</li>
+                  <li><b>{t('faq.reports.list.bankroll')}</b> — {t('faq.reports.list.bankrollDesc')}</li>
+                  <li><b>{t('faq.reports.list.expenses')}</b> — {t('faq.reports.list.expensesDesc')}</li>
+                </ul>
+                {t('faq.reports.footer')}
+              </Paragraph>
+            ),
+          },
+          {
             key: '8',
-            label: <Space style={{ color: '#d4a843' }}><DatabaseOutlined />{t('faq.backup.label')}</Space>,
+            label: <Space style={{ color: 'var(--color-accent)' }}><DatabaseOutlined />{t('faq.backup.label')}</Space>,
             children: (
               <div style={{ textAlign: 'center' }}>
                 <Paragraph>
                   <Trans i18nKey="faq.backup.desc1" components={{ code: <code /> }} />
-                </Paragraph>
-                <Paragraph>
-                  {t('faq.backup.desc2')}
-                </Paragraph>
-                <Paragraph type="secondary">
-                  <Trans i18nKey="faq.backup.desc3" components={{ code: <code /> }} />
                 </Paragraph>
                 <Space size={16} style={{ marginTop: 12, flexWrap: 'wrap', justifyContent: 'center' }}>
                   <Button type="primary" icon={<DownloadOutlined />} onClick={handleExport}>
@@ -270,6 +273,42 @@ export default function FaqPage() {
                   </Button>
                 </div>
               </div>
+            ),
+          },
+          {
+            key: '1',
+            label: <Space style={{ color: 'var(--color-accent)' }}><HomeOutlined />{t('faq.room.label')}</Space>,
+            children: (
+              <Paragraph>
+                {t('faq.room.content')}
+              </Paragraph>
+            ),
+          },
+          {
+            key: '14',
+            label: <Space style={{ color: 'var(--color-accent)' }}><SunOutlined />{t('faq.theme.label')}</Space>,
+            children: (
+              <Paragraph>
+                {t('faq.theme.content')}
+              </Paragraph>
+            ),
+          },
+          {
+            key: '2',
+            label: <Space style={{ color: 'var(--color-accent)' }}><TrophyOutlined />{t('faq.tournament.label')}</Space>,
+            children: (
+              <Paragraph>
+                {t('faq.tournament.content')}
+              </Paragraph>
+            ),
+          },
+          {
+            key: '12',
+            label: <Space style={{ color: 'var(--color-accent)' }}><FlagOutlined />{t('faq.goals.label')}</Space>,
+            children: (
+              <Paragraph>
+                {t('faq.goals.content')}
+              </Paragraph>
             ),
           },
         ]}

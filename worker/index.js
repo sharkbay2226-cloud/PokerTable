@@ -1,4 +1,5 @@
 const MAX_ACTIVATIONS = 3;
+const TRIAL_DAYS = 14;
 
 export default {
   async fetch(request, env) {
@@ -21,6 +22,12 @@ export default {
     if (method === 'POST' && url.pathname === '/admin/revoke') {
       return handleAdminRevoke(request, env);
     }
+    if (method === 'POST' && url.pathname === '/trial-start') {
+      return handleTrialStart(request, env);
+    }
+    if (method === 'POST' && url.pathname === '/validate-trial') {
+      return handleValidateTrial(request, env);
+    }
     return json({ error: 'Not found' }, 404);
   },
 };
@@ -33,6 +40,11 @@ async function ensureTables(env) {
       fingerprint TEXT NOT NULL,
       activated_at TEXT DEFAULT (datetime('now')),
       UNIQUE(license_key, fingerprint)
+    )`).run();
+    await env.DB.prepare(`CREATE TABLE IF NOT EXISTS trials (
+      machine_id TEXT PRIMARY KEY,
+      trial_started_at TEXT NOT NULL,
+      last_seen_at TEXT DEFAULT (datetime('now'))
     )`).run();
   } catch (e) {
     console.error('Migration: ' + e.message);
@@ -157,6 +169,81 @@ async function handleAdminRevoke(request, env) {
   await env.DB.prepare('DELETE FROM activations WHERE license_key = ?').bind(key).run();
   await env.DB.prepare('UPDATE licenses SET current_fingerprint = NULL WHERE key = ?').bind(key).run();
   return json({ ok: true, message: 'All activations cleared' }, 200);
+}
+
+async function handleTrialStart(request, env) {
+  const { machineId } = await request.json().catch(() => ({}));
+  if (!machineId) return json({ error: 'Missing machineId' }, 400);
+
+  const existing = await env.DB.prepare(
+    'SELECT * FROM trials WHERE machine_id = ?'
+  ).bind(machineId).first();
+
+  if (existing) {
+    await env.DB.prepare(
+      "UPDATE trials SET last_seen_at = datetime('now') WHERE machine_id = ?"
+    ).bind(machineId).run();
+
+    const trialStarted = new Date(existing.trial_started_at).getTime();
+    const trialEnd = trialStarted + TRIAL_DAYS * 86400000;
+    const now = Date.now();
+
+    return json({
+      trialStartedAt: existing.trial_started_at,
+      trialEnd: new Date(trialEnd).toISOString(),
+      daysLeft: Math.max(0, Math.ceil((trialEnd - now) / 86400000)),
+    }, 200);
+  }
+
+  const now = new Date().toISOString();
+  await env.DB.prepare(
+    'INSERT INTO trials (machine_id, trial_started_at, last_seen_at) VALUES (?, ?, ?)'
+  ).bind(machineId, now, now).run();
+
+  return json({
+    trialStartedAt: now,
+    trialEnd: new Date(Date.now() + TRIAL_DAYS * 86400000).toISOString(),
+    daysLeft: TRIAL_DAYS,
+  }, 201);
+}
+
+async function handleValidateTrial(request, env) {
+  const { machineId } = await request.json().catch(() => ({}));
+  if (!machineId) return json({ error: 'Missing machineId' }, 400);
+
+  const trial = await env.DB.prepare(
+    'SELECT * FROM trials WHERE machine_id = ?'
+  ).bind(machineId).first();
+
+  if (!trial) {
+    return json({ valid: false, reason: 'not_found' }, 200);
+  }
+
+  await env.DB.prepare(
+    "UPDATE trials SET last_seen_at = datetime('now') WHERE machine_id = ?"
+  ).bind(machineId).run();
+
+  const trialStarted = new Date(trial.trial_started_at).getTime();
+  const trialEnd = trialStarted + TRIAL_DAYS * 86400000;
+  const now = Date.now();
+
+  if (now >= trialEnd) {
+    return json({
+      valid: true,
+      expired: true,
+      trialStartedAt: trial.trial_started_at,
+      trialEnd: new Date(trialEnd).toISOString(),
+      daysLeft: 0,
+    }, 200);
+  }
+
+  return json({
+    valid: true,
+    expired: false,
+    trialStartedAt: trial.trial_started_at,
+    trialEnd: new Date(trialEnd).toISOString(),
+    daysLeft: Math.ceil((trialEnd - now) / 86400000),
+  }, 200);
 }
 
 function json(data, status) {

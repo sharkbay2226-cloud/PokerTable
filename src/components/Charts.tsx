@@ -89,6 +89,13 @@ export default function Charts() {
     return rub;
   }, [enriched, totalBuyInRub, chartCurrency, settings.usdToRub, settings.eurToRub]);
 
+  const totalBounty = useMemo(() => {
+    const rub = totalBountyRub;
+    if (chartCurrency === 'USD') return rub / settings.usdToRub;
+    if (chartCurrency === 'EUR') return rub / settings.eurToRub;
+    return rub;
+  }, [totalBountyRub, chartCurrency, settings.usdToRub, settings.eurToRub]);
+
   const expenseStats = useMemo(() => {
     let filtered = enriched;
     if (expenseTournamentFilter.length > 0) {
@@ -291,29 +298,8 @@ export default function Charts() {
     return null;
   };
 
-  const cardStyle: React.CSSProperties = {
-    height: '100%',
-    display: 'flex',
-    flexDirection: 'column',
-    justifyContent: 'center',
-    transition: 'all 0.3s ease',
-    cursor: 'pointer',
-  };
-
   return (
     <div>
-      <style>{`
-        .stat-card {
-          transition: all 0.3s ease !important;
-        }
-        .stat-card:hover {
-          transform: translateY(-4px) !important;
-          box-shadow: 0 8px 24px rgba(0,0,0,0.3) !important;
-        }
-        .chart-card {
-          transition: opacity 0.4s ease, transform 0.4s ease;
-        }
-      `}</style>
 
       {/* Фильтры */}
       <Row gutter={16} style={{ marginBottom: 16 }} align="middle">
@@ -344,57 +330,64 @@ export default function Charts() {
       </Row>
       <Row gutter={[16, 16]} style={{ marginBottom: 24 }}>
         <Col xs={24} sm={12} lg={8} style={{ height: 120 }}>
-          <Card className="stat-card" hoverable style={{ ...cardStyle, background: 'linear-gradient(135deg, #3b82f620, #3b82f608)', border: '1px solid #3b82f640' }}>
+          <Card hoverable className="stat-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', cursor: 'pointer' }}>
             <Statistic title={t('reports.stats.totalProfit')} value={totalProfit} precision={chartCurrency === 'RUB' ? 0 : 2}
-              valueStyle={{ color: totalProfit >= 0 ? '#52c41a' : '#ff4d4f', fontSize: 24 }}
+              valueStyle={{ color: totalProfit >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', fontSize: 24 }}
               prefix={<DollarOutlined />} suffix={chartCurrency === 'RUB' ? '₽' : chartCurrency === 'USD' ? '$' : '€'} />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={8} style={{ height: 120 }}>
-          <Card className="stat-card" hoverable style={{ ...cardStyle, background: 'linear-gradient(135deg, #3b82f620, #3b82f608)', border: '1px solid #3b82f640' }}>
+          <Card hoverable className="stat-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', cursor: 'pointer' }}>
             <Statistic title="ROI" value={roi} precision={1}
-              valueStyle={{ color: roi >= 0 ? '#52c41a' : '#ff4d4f', fontSize: 24 }}
+              valueStyle={{ color: roi >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', fontSize: 24 }}
               prefix={roi >= 0 ? <RiseOutlined /> : <FallOutlined />} suffix="%" />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={8} style={{ height: 120 }}>
-          <Card className="stat-card" hoverable style={{ ...cardStyle, background: 'linear-gradient(135deg, #3b82f620, #3b82f608)', border: '1px solid #3b82f640' }}>
+          <Card hoverable className="stat-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', cursor: 'pointer' }}>
             <Statistic title={t('reports.stats.totalWon')} value={totalWon} precision={chartCurrency === 'RUB' ? 0 : 2}
-              valueStyle={{ color: totalWon >= 0 ? '#52c41a' : '#ff4d4f', fontSize: 24 }}
+              valueStyle={{ color: totalWon >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', fontSize: 24 }}
               prefix={<DollarOutlined />} suffix={chartCurrency === 'RUB' ? '₽' : chartCurrency === 'USD' ? '$' : '€'} />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={8} style={{ height: 120 }}>
-          <Card className="stat-card" hoverable style={{ ...cardStyle, background: 'linear-gradient(135deg, #3b82f620, #3b82f608)', border: '1px solid #3b82f640' }}>
+          <Card hoverable className="stat-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', cursor: 'pointer' }}>
             <Statistic title={t('reports.stats.sessionsPlayed')} value={enriched.length} valueStyle={{ fontSize: 24 }} prefix={<TeamOutlined />} />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={8} style={{ height: 120 }}>
-          <Card className="stat-card" hoverable style={{ ...cardStyle, background: 'linear-gradient(135deg, #3b82f620, #3b82f608)', border: '1px solid #3b82f640' }}>
+          <Card hoverable className="stat-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', cursor: 'pointer' }}>
             <Statistic title={t('reports.stats.avgBuyIn')} value={avgBuyIn} precision={chartCurrency === 'RUB' ? 0 : 2}
               valueStyle={{ fontSize: 24 }} prefix={<BankOutlined />}
               suffix={chartCurrency === 'RUB' ? '₽' : chartCurrency === 'USD' ? '$' : '€'} />
           </Card>
         </Col>
         <Col xs={24} sm={12} lg={8} style={{ height: 120 }}>
-          <Card className="stat-card" hoverable style={{ ...cardStyle, background: 'linear-gradient(135deg, #3b82f620, #3b82f608)', border: '1px solid #3b82f640' }}>
+          <Card hoverable className="stat-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', cursor: 'pointer' }}>
             <Statistic title={t('reports.stats.bestRoom')} value={bestRoom} valueStyle={{ fontSize: 24 }} prefix={<TrophyOutlined />} />
+          </Card>
+        </Col>
+        <Col xs={24} sm={12} lg={8} style={{ height: 120 }}>
+          <Card hoverable className="stat-card" style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center', cursor: 'pointer' }}>
+            <Statistic title={t('reports.stats.totalBountyWon')} value={totalBounty} precision={chartCurrency === 'RUB' ? 0 : 2}
+              valueStyle={{ color: '#d4a843', fontSize: 24 }} prefix={<DollarOutlined />}
+              suffix={chartCurrency === 'RUB' ? '₽' : chartCurrency === 'USD' ? '$' : '€'} />
           </Card>
         </Col>
       </Row>
 
       {/* Top 3 wins */}
       {topWins.length > 0 && (
-        <Card size="small" className="top-wins-section" style={{ marginBottom: 24, background: '#1e293b', border: '1px solid #3b82f630' }}>
+        <Card size="small" className="top-wins-section" style={{ marginBottom: 24 }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: 8, marginBottom: 8 }}>
-            <TrophyOutlined style={{ color: '#3b82f6', fontSize: 16 }} />
-            <span style={{ color: '#3b82f6', fontSize: 14, fontWeight: 700 }}>{t('reports.charts.top3Wins')}</span>
+            <TrophyOutlined style={{ color: '#fbbf24', fontSize: 16 }} />
+            <span style={{ color: '#fbbf24', fontSize: 14, fontWeight: 700 }}>{t('reports.charts.top3Wins')}</span>
           </div>
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             {topWins.map((w, i) => (
-              <div key={w.id} className="top-win-card" style={{ flex: '1 1 180px', background: '#1e293b', borderRadius: 8, padding: '8px 12px', border: '1px solid #334155' }}>
+              <div key={w.id} className="top-win-card" style={{ flex: '1 1 180px', borderRadius: 8, padding: '8px 12px', border: '1px solid #fbbf24', boxShadow: '0 0 6px rgba(251,191,36,0.3)' }}>
                 <div style={{ fontSize: 11, color: '#94a3b8' }}>#{i + 1}</div>
-                <div style={{ fontWeight: 700, fontSize: 18, color: '#52c41a' }}>{formatChartValue(w.displayProfit)}</div>
+                <div style={{ fontWeight: 700, fontSize: 18, color: 'var(--color-profit)' }}>{formatChartValue(w.displayProfit)}</div>
                 <div className="top-win-name" style={{ fontSize: 12, color: '#e2e8f0', marginTop: 2 }}>{w.tour?.name ?? '—'}</div>
                 <div style={{ fontSize: 11, color: '#64748b' }}>{w.date}</div>
               </div>
@@ -417,7 +410,7 @@ export default function Charts() {
           }
           key="profitByRoom"
         >
-          <Card className="chart-card" style={{ background: '#1e293b', border: '1px solid #3b82f620', borderRadius: 12 }}>
+          <Card className="chart-card">
             <ResponsiveContainer width="100%" height={420}>
               <PieChart>
                 <Pie
@@ -465,7 +458,7 @@ export default function Charts() {
               ]}
             />
           </div>
-          <Card className="chart-card" style={{ background: '#1e293b', border: '1px solid #3b82f620', borderRadius: 12 }}>
+          <Card className="chart-card">
             <ResponsiveContainer width="100%" height={420}>
               <BarChart data={tournamentProfitByCount} margin={{ top: 8, right: 16, left: 16, bottom: 8 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
@@ -500,7 +493,7 @@ export default function Charts() {
           }
           key="bankroll"
         >
-          <Card className="chart-card" style={{ background: '#1e293b', border: '1px solid #3b82f620', borderRadius: 12 }}>
+          <Card className="chart-card">
             <ResponsiveContainer width="100%" height={420}>
               <LineChart data={bankroll} margin={{ top: 8, right: 16, left: 0, bottom: 8 }}>
                 <CartesianGrid strokeDasharray="3 3" stroke="#334155" vertical={false} />
@@ -574,7 +567,7 @@ export default function Charts() {
           {showWorst && (
             <div style={{ marginTop: 12 }}>
               {worstTournaments.map((w, i) => (
-                <Card key={w.name} size="small" style={{ marginBottom: 6, background: '#0f172a', border: '1px solid #334155', borderRadius: 8 }}>
+                <Card key={w.name} size="small" style={{ marginBottom: 6 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <Space>
                       <span style={{ color: '#64748b', fontSize: 11 }}>#{i + 1}</span>
@@ -588,7 +581,7 @@ export default function Charts() {
                       </div>
                       <div style={{ textAlign: 'center' }}>
                         <span style={{ color: '#64748b', fontSize: 10, display: 'block' }}>{t('reports.expenses.profit')}</span>
-                        <span style={{ color: w.profit >= 0 ? '#52c41a' : '#ff4d4f', fontWeight: 700, fontSize: 15 }}>{formatChartValue(w.profit)}</span>
+                        <span style={{ color: w.profit >= 0 ? 'var(--color-profit)' : 'var(--color-loss)', fontWeight: 700, fontSize: 15 }}>{formatChartValue(w.profit)}</span>
                       </div>
                     </Space>
                   </div>
@@ -599,7 +592,7 @@ export default function Charts() {
           {expenseStats.breakdown.length > 0 && expenseTournamentFilter.length > 0 && (
             <div style={{ marginTop: 16 }}>
               {expenseStats.breakdown.map((b) => (
-                <Card key={b.name} size="small" style={{ marginBottom: 8, background: '#0f172a', border: '1px solid #334155', borderRadius: 8 }}>
+                <Card key={b.name} size="small" style={{ marginBottom: 8 }}>
                   <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                     <div>
                       <span style={{ color: '#e2e8f0', fontWeight: 600 }}>{b.name}</span>

@@ -1,6 +1,7 @@
 const crypto = require('crypto');
 const fs = require('fs');
 const path = require('path');
+const os = require('os');
 const { app } = require('electron');
 
 const STORE_FILE = '.pd-' + crypto.createHash('md5').update('PokerDiary2026').digest('hex').slice(0, 8);
@@ -62,6 +63,50 @@ function getFingerprint() {
   return s.fingerprint;
 }
 
+function getMachineId() {
+  const raw = os.hostname() + '-' + (process.env.USERNAME || os.userInfo().username) + '-' + (process.env.USERDOMAIN || '');
+  return crypto.createHash('sha256').update(raw).digest('hex').slice(0, 32);
+}
+
+async function getServerTrialStatus(machineId) {
+  try {
+    const res = await fetch(WORKER_URL + '/validate-trial', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ machineId }),
+      signal: AbortSignal.timeout(3000),
+    });
+    const data = await res.json();
+    if (res.ok && data.valid) {
+      return { ok: true, daysLeft: data.daysLeft, trialEnd: data.trialEnd, trialStartedAt: new Date(data.trialStartedAt).getTime(), expired: data.expired };
+    }
+    if (res.ok && !data.valid && data.reason === 'not_found') {
+      return { ok: false, notFound: true };
+    }
+    return { ok: false };
+  } catch {
+    return { ok: false };
+  }
+}
+
+async function startServerTrial(machineId) {
+  try {
+    const res = await fetch(WORKER_URL + '/trial-start', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ machineId }),
+      signal: AbortSignal.timeout(3000),
+    });
+    const data = await res.json();
+    if (res.ok) {
+      return { ok: true, daysLeft: data.daysLeft, trialEnd: data.trialEnd, trialStartedAt: data.trialStartedAt };
+    }
+    return { ok: false };
+  } catch {
+    return { ok: false };
+  }
+}
+
 async function validateRemote(key, fingerprint) {
   try {
     const res = await fetch(WORKER_URL + '/validate', {
@@ -108,7 +153,7 @@ async function revalidateIfNeeded() {
   saveStore(s);
 }
 
-function getLicenseStatus() {
+async function getLicenseStatus() {
   revalidateIfNeeded();
 
   const s = loadStore();
@@ -133,15 +178,43 @@ function getLicenseStatus() {
     }
   }
 
-  if (s.trialStartedAt) {
-    const trialEnd = s.trialStartedAt + TRIAL_DAYS * 86400000;
-    if (now < trialEnd) {
-      const daysLeft = Math.ceil((trialEnd - now) / 86400000);
-      return { status: 'trial', daysLeft, trialEnd };
+  // Server-side trial tracking
+  const machineId = getMachineId();
+  const serverTrial = await getServerTrialStatus(machineId);
+
+  if (serverTrial.ok) {
+    if (serverTrial.expired) {
+      return { status: 'expired', reason: 'trial_ended' };
     }
-    return { status: 'expired', reason: 'trial_ended' };
+    s.serverTrialStartedAt = serverTrial.trialStartedAt;
+    saveStore(s);
+    return { status: 'trial', daysLeft: serverTrial.daysLeft, trialEnd: serverTrial.trialEnd };
   }
 
+  // Server offline or trial not found — fallback to local cache
+  if (!serverTrial.notFound) {
+    const localTrialStart = s.serverTrialStartedAt || s.trialStartedAt;
+    if (localTrialStart) {
+      const trialEnd = localTrialStart + TRIAL_DAYS * 86400000;
+      if (now < trialEnd) {
+        const daysLeft = Math.ceil((trialEnd - now) / 86400000);
+        return { status: 'trial', daysLeft, trialEnd };
+      }
+      return { status: 'expired', reason: 'trial_ended' };
+    }
+  }
+
+  // No trial at all — try to start one on server
+  if (serverTrial.notFound) {
+    const newTrial = await startServerTrial(machineId);
+    if (newTrial.ok) {
+      s.serverTrialStartedAt = new Date(newTrial.trialStartedAt).getTime();
+      saveStore(s);
+      return { status: 'trial', daysLeft: newTrial.daysLeft, trialEnd: newTrial.trialEnd };
+    }
+  }
+
+  // Server completely unavailable — start local trial as last resort
   s.trialStartedAt = now;
   saveStore(s);
   return { status: 'trial', daysLeft: TRIAL_DAYS, trialEnd: now + TRIAL_DAYS * 86400000 };

@@ -1,6 +1,7 @@
 export interface Room {
   id: string;
   name: string;
+  defaultCurrency?: Currency;
 }
 
 export interface Tournament {
@@ -9,7 +10,18 @@ export interface Tournament {
   roomId: string;
   buyIn: number;
   currency: 'RUB' | 'USD' | 'EUR';
+  color?: string;
+  type?: string;
 }
+
+export const TOURNAMENT_TYPES = [
+  'Bounty',
+  'Bounty turbo',
+  'Freezeout',
+  'Hyper',
+  'Mystery Bounty',
+  'Turbo',
+];
 
 export interface Backer {
   id: string;
@@ -29,6 +41,16 @@ export interface Session {
   prizeCurrency: 'RUB' | 'USD' | 'EUR';
   bountySum: number;
   bountyCurrency: 'RUB' | 'USD' | 'EUR';
+  sessionId?: number;
+  createdAt?: string;
+}
+
+export interface GameSession {
+  id: number;
+  number: number;
+  startDate: string;
+  endDate: string | null;
+  archived: boolean;
 }
 
 export interface BankrollEntry {
@@ -52,6 +74,7 @@ export interface AppSettings {
   backers?: Backer[];
   themeMode?: 'dark' | 'light';
   locale?: 'ru' | 'en';
+  menuOrder?: string[];
 }
 
 export interface RangeColor {
@@ -112,4 +135,16 @@ export function createFolder(name: string, parentId: string | null): TrainingFol
     name,
     parentId,
   };
+}
+
+export interface Goal {
+  id: number;
+  targetCount: number;
+  profitTarget?: number;
+  startDate: string;
+  endDate: string | null;
+  completed: boolean;
+  completedDate: string | null;
+  createdAt?: string;
+  completedAt?: string;
 }

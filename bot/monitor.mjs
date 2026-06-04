@@ -2,6 +2,7 @@ import 'dotenv/config';
 import { initDb, getDb, rows, confirmOrder, addLicense } from './db.js';
 import { setWalletAddress, getIncomingTransfers } from './trongrid.js';
 import { createLicense } from './worker.js';
+import { awardReferral } from './referralReward.js';
 import { Bot } from 'grammy';
 
 const BOT_TOKEN = process.env.BOT_TOKEN;
@@ -108,6 +109,16 @@ async function processPendingOrders(bot) {
       const adminIds = (process.env.ADMIN_IDS || '').split(',').map(s => parseInt(s.trim(), 10)).filter(n => !isNaN(n));
       for (const id of adminIds) {
         bot.api.sendMessage(id, adminMsg, { parse_mode: 'HTML' }).catch(() => {});
+      }
+
+      const refReward = awardReferral(order.user_id);
+      if (refReward) {
+        const refMsg = refReward.type === 'extension_days'
+          ? `🎉 Реферер #${order.user_id} получил +${refReward.amount} дней`
+          : `🎉 Реферер #${order.user_id} получил $${refReward.amount.toFixed(2)} USDT`;
+        for (const id of adminIds) {
+          bot.api.sendMessage(id, `👥 <b>Реферальная награда (авто)</b>\n${refMsg}`, { parse_mode: 'HTML' }).catch(() => {});
+        }
       }
     } catch (e) {
       console.error(`[${ts()}] License creation failed for order #${order.id}: ${e.message}`);

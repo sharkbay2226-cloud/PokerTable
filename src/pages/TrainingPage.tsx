@@ -1,7 +1,7 @@
 import { useState, useEffect, useCallback, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Typography, Tabs, Button, Space, Card, message, Select } from 'antd';
-import { EditOutlined, PlayCircleOutlined } from '@ant-design/icons';
+import { Typography, Tabs, Button, Space, Card, message, Select, Modal } from 'antd';
+import { EditOutlined, PlayCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { isRange, isFolder } from '../types';
 import type { TrainingItem, RangeData } from '../types';
 import { loadTrainingData, saveTrainingData } from '../db/db';
@@ -156,11 +156,24 @@ export default function TrainingPage() {
     return rangeToGrid(trainerRange);
   }, [trainerRange]);
 
-  if (loading) return <div style={{ display: 'flex', justifyContent: 'center', padding: 60, color: '#64748b' }}>Loading...</div>;
+  const [helpOpen, setHelpOpen] = useState(false);
+
+  if (loading) return (
+    <div style={{ padding: 48 }}>
+      <div style={{ display: 'flex', gap: 16, alignItems: 'center', marginBottom: 32 }}>
+        <div className="poker-skeleton" style={{ width: 200, height: 32 }} />
+        <div className="poker-skeleton" style={{ width: 32, height: 32, borderRadius: '50%' }} />
+      </div>
+      <div className="poker-skeleton" style={{ width: '100%', height: 400 }} />
+    </div>
+  );
 
   return (
     <div>
-      <Title level={3} style={{ marginBottom: 24 }}>{t('training.title')}</Title>
+      <Space style={{ marginBottom: 24 }}>
+        <Title level={3} style={{ margin: 0 }}>{t('training.title')}</Title>
+        <Button type="text" icon={<QuestionCircleOutlined style={{ color: 'var(--color-accent)', fontSize: 18 }} />} onClick={() => setHelpOpen(true)} />
+      </Space>
 
       <Tabs
         activeKey={tab}
@@ -173,7 +186,7 @@ export default function TrainingPage() {
             children: (
               <div style={{ display: 'flex', gap: 24 }}>
                 <div style={{ width: 320, flexShrink: 0 }}>
-                  <Card title={t('training.library')} style={{ background: '#0f172a', borderColor: '#334155' }} headStyle={{ color: '#e2e8f0', borderBottomColor: '#334155' }}>
+                  <Card title={t('training.library')} styles={{ header: { color: 'var(--color-text)', borderBottomColor: 'var(--color-border)' } }}>
                     <FolderTree items={items} onChange={handleItemsChange} selectedId={selectedId} onSelect={handleSelect} />
                   </Card>
                 </div>
@@ -199,7 +212,7 @@ export default function TrainingPage() {
             label: <span><PlayCircleOutlined /> {t('training.tabTrainer')}</span>,
             children: (
               <div>
-                <Card style={{ background: '#0f172a', borderColor: '#334155', marginBottom: 16 }}>
+                <Card style={{ marginBottom: 16 }}>
                   <Space direction="vertical" size={12} style={{ width: '100%' }}>
                     <div>
                       <Text style={{ color: '#94a3b8', fontSize: 13, display: 'block', marginBottom: 6 }}>{t('training.selectFolder')}</Text>
@@ -239,6 +252,18 @@ export default function TrainingPage() {
           },
         ]}
       />
+
+      <Modal title={<span style={{ color: 'var(--color-accent)' }}>{t('training.help.title')}</span>} open={helpOpen} onCancel={() => setHelpOpen(false)} footer={null} width={520}>
+        <Typography.Paragraph>{t('training.help.intro')}</Typography.Paragraph>
+        <Typography.Paragraph>
+          <span style={{ color: 'var(--color-accent)', fontWeight: 'bold' }}>{t('training.help.editor')}</span><br />
+          {t('training.help.editorDesc')}
+        </Typography.Paragraph>
+        <Typography.Paragraph>
+          <span style={{ color: 'var(--color-accent)', fontWeight: 'bold' }}>{t('training.help.trainer')}</span><br />
+          {t('training.help.trainerDesc')}
+        </Typography.Paragraph>
+      </Modal>
     </div>
   );
 }

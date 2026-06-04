@@ -51,7 +51,7 @@ export async function initDb() {
 
   db.run(`CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY, username TEXT, first_name TEXT, last_name TEXT,
-    referrer_id INTEGER, created_at TEXT DEFAULT (datetime('now'))
+    referrer_id INTEGER, usdt_balance REAL DEFAULT 0, created_at TEXT DEFAULT (datetime('now'))
   )`);
   db.run(`CREATE TABLE IF NOT EXISTS orders (
     id INTEGER PRIMARY KEY AUTOINCREMENT, user_id INTEGER NOT NULL,
@@ -165,12 +165,53 @@ export function addReferral(referrerId, refereeId, rewardType, rewardAmount) {
   exec('INSERT INTO referrals (referrer_id,referee_id,reward_type,reward_amount,status) VALUES (?,?,?,?,"pending")', {
     0: referrerId, 1: refereeId, 2: rewardType, 3: rewardAmount,
   });
+  const r = db.exec('SELECT MAX(id) as id FROM referrals');
+  const maxId = r[0]?.values[0]?.[0];
+  return maxId || null;
+}
+
+export function payReferral(referralId) {
+  exec('UPDATE referrals SET status="paid" WHERE id=? AND status="pending"', { 0: referralId });
+}
+
+export function getReferralById(referralId) {
+  return row('SELECT * FROM referrals WHERE id=?', { 0: referralId });
+}
+
+export function getLatestActiveLicense(userId) {
+  return row(
+    "SELECT * FROM licenses WHERE user_id=? AND status='active' AND expires_at > datetime('now') ORDER BY expires_at DESC LIMIT 1",
+    { 0: userId }
+  );
+}
+
+export function extendLicense(userId, days) {
+  const license = getLatestActiveLicense(userId);
+  if (!license) return null;
+  const currentExpires = new Date(license.expires_at);
+  const newExpires = new Date(currentExpires.getTime() + days * 86400000).toISOString();
+  exec('UPDATE licenses SET expires_at=? WHERE id=?', { 0: newExpires, 1: license.id });
+  return license;
+}
+
+export function addUsdtBalance(userId, amount) {
+  try {
+    exec('UPDATE users SET usdt_balance=COALESCE(usdt_balance,0)+? WHERE id=?', { 0: amount, 1: userId });
+  } catch {
+    exec('ALTER TABLE users ADD COLUMN usdt_balance REAL DEFAULT 0', {});
+    exec('UPDATE users SET usdt_balance=? WHERE id=?', { 0: amount, 1: userId });
+  }
+}
+
+export function getPendingUsdtReferrals() {
+  return rows("SELECT r.*, u.usdt_balance FROM referrals r JOIN users u ON r.referrer_id=u.id WHERE r.reward_type='usdt' AND r.status='pending'");
 }
 
 export function getReferralStats(userId) {
   const total = row('SELECT COUNT(*) as c FROM referrals WHERE referrer_id=? AND status="paid"', { 0: userId });
   const pending = row('SELECT COUNT(*) as c FROM referrals WHERE referrer_id=? AND status="pending"', { 0: userId });
-  return { total: total?.c || 0, pending: pending?.c || 0 };
+  const balance = row('SELECT usdt_balance FROM users WHERE id=?', { 0: userId });
+  return { total: total?.c || 0, pending: pending?.c || 0, usdtBalance: balance?.usdt_balance || 0 };
 }
 
 export function createPromoCode(code, discount, maxUses, expiresAt) {

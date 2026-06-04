@@ -1,9 +1,10 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
-import { Card, Row, Col, Select, Typography, Space, Tag, Empty, DatePicker, Pagination } from 'antd';
-import { SwapOutlined, TrophyOutlined, CloseCircleOutlined, PlusOutlined, MinusOutlined } from '@ant-design/icons';
+import { Button, Card, Row, Col, Select, Typography, Space, Tag, DatePicker, Pagination, Popconfirm, message, Modal } from 'antd';
+import PokerEmpty from '../components/PokerEmpty';
+import { SwapOutlined, TrophyOutlined, CloseCircleOutlined, PlusOutlined, MinusOutlined, DeleteOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import dayjs from 'dayjs';
-import { getAllRooms, getAllSessions, getAllTournaments, getAllBankrollEntries } from '../db/db';
+import { getAllRooms, getAllSessions, getAllTournaments, getAllBankrollEntries, deleteBankrollEntry } from '../db/db';
 import type { Room, BankrollEntry, Currency } from '../types';
 import { convertToUsd } from '../utils/currency';
 import { useAppStore } from '../store/appStore';
@@ -36,14 +37,18 @@ export default function MovementsPage() {
   const [dateRange, setDateRange] = useState<[dayjs.Dayjs | null, dayjs.Dayjs | null] | null>(null);
   const [sortOrder, setSortOrder] = useState<'desc' | 'asc'>('desc');
   const [currentPage, setCurrentPage] = useState(1);
+  const [helpOpen, setHelpOpen] = useState(false);
+
+  const load = async () => {
+    const [r, s, t, e] = await Promise.all([getAllRooms(), getAllSessions(), getAllTournaments(), getAllBankrollEntries()]);
+    setRooms(r);
+    setSessions(s);
+    setTournaments(t);
+    setEntries(e);
+  };
 
   useEffect(() => {
-    Promise.all([getAllRooms(), getAllSessions(), getAllTournaments(), getAllBankrollEntries()]).then(([r, s, t, e]) => {
-      setRooms(r);
-      setSessions(s);
-      setTournaments(t);
-      setEntries(e);
-    });
+    load();
   }, []);
 
   useEffect(() => { setCurrentPage(1); }, [roomFilter, typeFilter, dateRange, sortOrder]);
@@ -59,8 +64,8 @@ export default function MovementsPage() {
       const tour = tourMap.get(s.tournamentId);
       const room = tour ? roomMap.get(tour.roomId) : undefined;
       const buyInUsd = tour ? convertToUsd(tour.buyIn, tour.currency) : 0;
-      const prizeUsd = s.inPrize ? convertToUsd(s.prize, s.prizeCurrency) : 0;
-      const bountyUsd = s.inPrize ? convertToUsd(s.bountySum, s.bountyCurrency) : 0;
+      const prizeUsd = s.place > 0 ? convertToUsd(s.prize, s.prizeCurrency) : 0;
+      const bountyUsd = s.place > 0 ? convertToUsd(s.bountySum, s.bountyCurrency) : 0;
       const profitUsd = prizeUsd + bountyUsd - buyInUsd;
 
       if (profitUsd > 0) {
@@ -85,7 +90,7 @@ export default function MovementsPage() {
           description: `${tour?.name ?? '—'} (приз ${prizeUsd.toFixed(2)}$ + баунти ${bountyUsd.toFixed(2)}$ - бай-ин ${buyInUsd.toFixed(2)}$)`,
           usdAmount: Math.abs(profitUsd),
         });
-      } else if (profitUsd === 0 && s.inPrize) {
+      } else if (profitUsd === 0 && s.place > 0) {
         list.push({
           id: `session-zero-${s.id}`,
           date: s.date,
@@ -111,7 +116,7 @@ export default function MovementsPage() {
         currency: cur,
         roomName: room?.name ?? '—',
         description: e.comment || (e.amount >= 0 ? t('movements.types.deposit') : t('movements.types.withdrawal')),
-        usdAmount: Math.abs(e.amount),
+        usdAmount: convertToUsd(Math.abs(e.amount), cur),
       });
     }
 
@@ -139,8 +144,8 @@ export default function MovementsPage() {
   }, [sessions, entries, tourMap, roomMap, roomFilter, typeFilter, dateRange, sortOrder]);
 
   const typeColors: Record<string, string> = {
-    win: '#52c41a',
-    loss: '#ff4d4f',
+    win: 'var(--color-profit)',
+    loss: 'var(--color-loss)',
     deposit: '#3b82f6',
     withdrawal: '#f59e0b',
   };
@@ -163,7 +168,22 @@ export default function MovementsPage() {
     return Array.from(names).sort();
   }, [rooms]);
 
-  const convertAmount = (usd: number) => `${usd.toFixed(2)} $`;
+  const convertAmount = (m: Movement) => {
+    const sym = m.currency === 'USD' ? '$' : m.currency === 'EUR' ? '€' : '₽';
+    return `${m.amount.toFixed(2)} ${sym}`;
+  };
+
+  const handleDeleteEntry = async (movementId: string) => {
+    const entryId = parseInt(movementId.replace('bankroll-', ''), 10);
+    if (isNaN(entryId)) return;
+    try {
+      await deleteBankrollEntry(entryId);
+      message.success(t('movements.page.deleteSuccess'));
+      load();
+    } catch {
+      message.error(t('movements.page.deleteError'));
+    }
+  };
 
   const totalWin = useMemo(() => movements.filter((m) => m.type === 'win').reduce((s, m) => s + m.usdAmount, 0), [movements]);
   const totalLoss = useMemo(() => movements.filter((m) => m.type === 'loss').reduce((s, m) => s + m.usdAmount, 0), [movements]);
@@ -177,7 +197,10 @@ export default function MovementsPage() {
 
   return (
     <div>
-      <Title level={3} style={{ marginBottom: 24 }}><SwapOutlined style={{ marginRight: 8 }} />{t('movements.page.title')}</Title>
+      <Space style={{ marginBottom: 24 }}>
+        <Title level={3} style={{ margin: 0 }}><SwapOutlined style={{ marginRight: 8 }} />{t('movements.page.title')}</Title>
+        <Button type="text" icon={<QuestionCircleOutlined style={{ color: 'var(--color-accent)', fontSize: 18 }} />} onClick={() => setHelpOpen(true)} />
+      </Space>
 
       {/* Filters */}
       <Row gutter={[12, 12]} style={{ marginBottom: 16 }} align="middle">
@@ -226,8 +249,8 @@ export default function MovementsPage() {
             style={{ width: '100%' }}
             size="small"
             options={[
-              { value: 'desc', label: t('movements.filters.newest') },
-              { value: 'asc', label: t('movements.filters.oldest') },
+              { value: 'desc', label: t('movements.sort.newest') },
+              { value: 'asc', label: t('movements.sort.oldest') },
             ]}
           />
         </Col>
@@ -236,25 +259,25 @@ export default function MovementsPage() {
       {/* Summary */}
       <Row gutter={[12, 12]} style={{ marginBottom: 16 }}>
         <Col xs={12} sm={6} md={3}>
-          <Card size="small" style={{ background: '#1e293b', border: '1px solid #52c41a40' }}>
+          <Card size="small" style={{ border: '1px solid var(--color-profit)' }}>
             <Text type="secondary" style={{ fontSize: 11 }}>{t('movements.summary.wins')}</Text>
-            <div style={{ color: '#52c41a', fontWeight: 700, fontSize: 16 }}>{totalWin.toFixed(2)}$</div>
+            <div style={{ color: 'var(--color-profit)', fontWeight: 700, fontSize: 16 }}>{totalWin.toFixed(2)}$</div>
           </Card>
         </Col>
         <Col xs={12} sm={6} md={3}>
-          <Card size="small" style={{ background: '#1e293b', border: '1px solid #ff4d4f40' }}>
+          <Card size="small" style={{ border: '1px solid var(--color-loss)' }}>
             <Text type="secondary" style={{ fontSize: 11 }}>{t('movements.summary.losses')}</Text>
-            <div style={{ color: '#ff4d4f', fontWeight: 700, fontSize: 16 }}>{totalLoss.toFixed(2)}$</div>
+            <div style={{ color: 'var(--color-loss)', fontWeight: 700, fontSize: 16 }}>{totalLoss.toFixed(2)}$</div>
           </Card>
         </Col>
         <Col xs={12} sm={6} md={3}>
-          <Card size="small" style={{ background: '#1e293b', border: '1px solid #3b82f640' }}>
+          <Card size="small" style={{ border: '1px solid #3b82f640' }}>
             <Text type="secondary" style={{ fontSize: 11 }}>{t('movements.summary.deposits')}</Text>
             <div style={{ color: '#3b82f6', fontWeight: 700, fontSize: 16 }}>{totalDeposit.toFixed(2)}$</div>
           </Card>
         </Col>
         <Col xs={12} sm={6} md={3}>
-          <Card size="small" style={{ background: '#1e293b', border: '1px solid #f59e0b40' }}>
+          <Card size="small" style={{ border: '1px solid #f59e0b40' }}>
             <Text type="secondary" style={{ fontSize: 11 }}>{t('movements.summary.withdrawals')}</Text>
             <div style={{ color: '#f59e0b', fontWeight: 700, fontSize: 16 }}>{totalWithdrawal.toFixed(2)}$</div>
           </Card>
@@ -263,11 +286,11 @@ export default function MovementsPage() {
 
       {/* Movement list */}
       {movements.length === 0 ? (
-        <Empty description={t('movements.page.empty')} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        <PokerEmpty description={t('movements.page.empty')} icon="cards" />
       ) : (
         <div style={{ display: 'flex', flexDirection: 'column', gap: 6 }}>
           {displayedMovements.map((m) => (
-            <Card key={m.id} size="small" hoverable style={{ background: '#0f172a', border: '1px solid #334155', borderRadius: 8 }}>
+            <Card key={m.id} size="small" hoverable>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 12 }}>
                 <Space size={8} wrap>
                   <Tag color={typeColors[m.type]} style={{ margin: 0, borderRadius: 4, fontWeight: 600 }}>
@@ -279,11 +302,23 @@ export default function MovementsPage() {
                   <Text style={{ color: '#94a3b8', fontSize: 12 }}>{m.date}</Text>
                   <Text style={{ color: '#3b82f6', fontSize: 12 }}>{m.roomName}</Text>
                 </Space>
-                <div style={{ textAlign: 'right', flexShrink: 0 }}>
-                  <Text strong style={{ fontSize: 15, color: m.type === 'win' || m.type === 'deposit' ? '#52c41a' : '#ff4d4f' }}>
-                    {m.type === 'win' || m.type === 'deposit' ? '+' : '-'}{convertAmount(m.amount)}
-                  </Text>
-                  <div style={{ fontSize: 11, color: '#64748b' }}>{m.description}</div>
+                <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
+                  <div style={{ textAlign: 'right', flexShrink: 0 }}>
+                    <Text strong style={{ fontSize: 15, color: m.type === 'win' || m.type === 'deposit' ? 'var(--color-profit)' : 'var(--color-loss)' }}>
+                      {m.type === 'win' || m.type === 'deposit' ? '+' : '-'}{convertAmount(m)}
+                    </Text>
+                    <div style={{ fontSize: 11, color: '#64748b' }}>{m.description}</div>
+                  </div>
+                  {m.id.startsWith('bankroll-') && (
+                    <Popconfirm
+                      title={t('movements.page.deleteConfirm')}
+                      onConfirm={() => handleDeleteEntry(m.id)}
+                      okText={t('movements.page.deleteOk')}
+                      cancelText={t('movements.page.deleteCancel')}
+                    >
+                      <Button type="text" size="small" icon={<DeleteOutlined />} style={{ color: '#64748b', fontSize: 18, display: 'flex', alignItems: 'center', justifyContent: 'center' }} />
+                    </Popconfirm>
+                  )}
                 </div>
               </div>
             </Card>
@@ -301,6 +336,18 @@ export default function MovementsPage() {
           )}
         </div>
       )}
+
+      <Modal title={<span style={{ color: 'var(--color-accent)' }}>{t('movements.help.title')}</span>} open={helpOpen} onCancel={() => setHelpOpen(false)} footer={null} width={520}>
+        <Typography.Paragraph>{t('movements.help.intro')}</Typography.Paragraph>
+        <Typography.Paragraph>
+          <span style={{ color: 'var(--color-accent)', fontWeight: 'bold' }}>{t('movements.help.filters')}</span><br />
+          {t('movements.help.filtersDesc')}
+        </Typography.Paragraph>
+        <Typography.Paragraph>
+          <span style={{ color: 'var(--color-accent)', fontWeight: 'bold' }}>{t('movements.help.types')}</span><br />
+          {t('movements.help.typesDesc')}
+        </Typography.Paragraph>
+      </Modal>
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { confirmOrder, addLicense, row } from '../db.js';
 import { createLicense } from '../worker.js';
 import { verifyTransaction } from '../trongrid.js';
 import { notifyAdmins } from '../notify.js';
+import { awardReferral } from '../referralReward.js';
 
 export function confirmCommand(bot) {
   bot.command('confirm', async (ctx) => {
@@ -94,6 +95,14 @@ export function confirmCommand(bot) {
 💎 ${PLAN_NAMES[plan]} | $${order.amount_usdt}
 🔑 <code>${licenseKey}</code>
 📅 ${new Date().toLocaleString('ru-RU')}`);
+
+      const refReward = awardReferral(ctx.from.id);
+      if (refReward) {
+        const refMsg = refReward.type === 'extension_days'
+          ? `🎉 Ваш реферер получил +${refReward.amount} дней продления лицензии!`
+          : `🎉 Ваш реферер получил $${refReward.amount.toFixed(2)} USDT на баланс!`;
+        notifyAdmins(bot, `👥 <b>Реферальная награда</b>\n👤 ${name}\n🎁 ${refMsg}`);
+      }
     } catch (e) {
       await ctx.reply(`❌ Ошибка создания лицензии: ${e.message}. Обратитесь к администратору.`);
     }

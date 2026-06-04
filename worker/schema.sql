@@ -11,3 +11,9 @@ CREATE TABLE IF NOT EXISTS licenses (
 
 CREATE INDEX IF NOT EXISTS idx_licenses_key ON licenses(key);
 CREATE INDEX IF NOT EXISTS idx_licenses_status ON licenses(status);
+
+CREATE TABLE IF NOT EXISTS trials (
+  machine_id TEXT PRIMARY KEY,
+  trial_started_at TEXT NOT NULL,
+  last_seen_at TEXT DEFAULT (datetime('now'))
+);
