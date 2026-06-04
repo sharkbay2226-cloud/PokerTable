@@ -45,7 +45,7 @@ export async function verifyTransaction(txid, expectedAmount) {
 
     for (const event of transfers) {
       const toHex = (event.topic2 || event.result?.to || '').toLowerCase().replace('0x', '');
-      if (toHex.includes(walletHex)) {
+      if (walletHex.includes(toHex)) {
         const valueHex = event.data || event.result?.value || '0';
         const amount = Number(BigInt(valueHex.startsWith('0x') ? valueHex : `0x${valueHex}`)) / 1_000_000;
         if (amount >= expectedAmount) {
