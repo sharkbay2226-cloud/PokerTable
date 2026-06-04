@@ -51,7 +51,7 @@ node monitor.mjs      # USDT Monitor (ping every 60s)
 
 Скачать последнюю версию: https://github.com/sharkbay2226-cloud/PokerTable/releases/latest
 
-Прямая ссылка (хостинг): http://sharkbqo.beget.tech/Poker%20Diary%20Setup%200.1.3.exe
+Прямая ссылка (хостинг): http://sharkbqo.beget.tech/Poker%20Diary%20Setup%200.2.2.exe
 
 ## Цены
 

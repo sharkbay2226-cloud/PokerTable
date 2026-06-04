@@ -88,7 +88,7 @@ async function processPendingOrders(bot) {
         `<code>${licenseKey}</code>`,
         '',
         '📥 <b>Скачать приложение:</b>',
-        '<a href="http://sharkbqo.beget.tech/Poker%20Diary%20Setup%200.1.3.exe">Poker Diary Setup 0.1.3</a>',
+        '<a href="http://sharkbqo.beget.tech/Poker%20Diary%20Setup%200.2.2.exe">Poker Diary Setup 0.1.3</a>',
         '',
         '📋 Введите ключ в приложении:',
         '   Menu → Ввести ключ → Онлайн-активация',

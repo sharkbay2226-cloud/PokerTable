@@ -6,7 +6,7 @@ export function downloadCommand(bot) {
       'Последняя версия для Windows:',
       '',
       '📦 <b>Хостинг (прямая ссылка):</b>',
-      '<a href="http://sharkbqo.beget.tech/Poker%20Diary%20Setup%200.1.3.exe">Poker Diary Setup 0.1.3</a>',
+      '<a href="http://sharkbqo.beget.tech/Poker%20Diary%20Setup%200.2.2.exe">Poker Diary Setup 0.1.3</a>',
       '',
       '🐙 <b>GitHub Releases:</b>',
       '<a href="https://github.com/sharkbay2226-cloud/PokerTable/releases/latest">github.com/sharkbay2226-cloud/PokerTable/releases</a>',

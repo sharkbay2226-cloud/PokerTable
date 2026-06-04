@@ -77,7 +77,7 @@ export function confirmCommand(bot) {
           `📅 <b>Тариф:</b> ${plan === 'lifetime' ? 'Бессрочная' : `${PLAN_NAMES[plan]} (до ${expiresAt.slice(0, 10)})`}`,
           '',
           '📥 <b>Скачать приложение:</b>',
-          '<a href="http://sharkbqo.beget.tech/Poker%20Diary%20Setup%200.1.3.exe">Poker Diary Setup 0.1.3</a> (хостинг)',
+          '<a href="http://sharkbqo.beget.tech/Poker%20Diary%20Setup%200.2.2.exe">Poker Diary Setup 0.1.3</a> (хостинг)',
           '<a href="https://github.com/sharkbay2226-cloud/PokerTable/releases/latest">GitHub Releases</a>',
           '',
           '📋 Введите ключ в приложении:',
