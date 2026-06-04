@@ -1,4 +1,4 @@
-import { confirmOrder, addLicense, row, getDb } from '../db.js';
+import { confirmOrder, addLicense, row } from '../db.js';
 import { createLicense } from '../worker.js';
 import { verifyTransaction } from '../trongrid.js';
 import { notifyAdmins } from '../notify.js';
@@ -7,11 +7,8 @@ import { awardReferral } from '../referralReward.js';
 const PLAN_NAMES = { monthly: 'Месячная', yearly: 'Годовая', lifetime: 'Бессрочная' };
 
 async function issueLicense(order, bot, ctx) {
-  const db = getDb();
-  if (order.license_key) {
-    db.run("DELETE FROM licenses WHERE key=?", [order.license_key]);
-  }
-  const licenseKey = generateLicenseKey();
+  const isRetry = !!order.license_key;
+  const licenseKey = isRetry ? order.license_key : generateLicenseKey();
   const plan = order.plan;
   const expiresAt = plan === 'lifetime'
     ? '2099-12-31T23:59:59Z'
@@ -21,7 +18,9 @@ async function issueLicense(order, bot, ctx) {
 
   try {
     await createLicense(licenseKey, plan, expiresAt);
-    addLicense(ctx.from.id, licenseKey, plan, expiresAt);
+    if (!isRetry) {
+      addLicense(ctx.from.id, licenseKey, plan, expiresAt);
+    }
 
     await ctx.reply(
       [

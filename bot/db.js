@@ -149,7 +149,7 @@ export function addLicense(userId, key, plan, expiresAt) {
   exec('INSERT INTO licenses (user_id,key,plan,expires_at) VALUES (?,?,?,?)', {
     0: userId, 1: key, 2: plan, 3: expiresAt,
   });
-  exec('UPDATE orders SET license_key=?,expires_at=? WHERE user_id=? AND plan=? AND status="confirmed"', {
+  exec('UPDATE orders SET license_key=?,expires_at=? WHERE user_id=? AND plan=? AND status="confirmed" AND license_key IS NULL', {
     0: key, 1: expiresAt, 2: userId, 3: plan,
   });
 }
