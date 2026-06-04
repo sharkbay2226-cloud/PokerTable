@@ -11,6 +11,7 @@ import { promoCommand } from './commands/promo.js';
 import { refCommand } from './commands/ref.js';
 import { downloadCommand } from './commands/download.js';
 import { adminCommand } from './commands/admin.js';
+import { supportCommand } from './commands/support.js';
 
 async function main() {
   const BOT_TOKEN = process.env.BOT_TOKEN;
@@ -43,6 +44,7 @@ async function main() {
   refCommand(bot);
   downloadCommand(bot);
   adminCommand(bot);
+  supportCommand(bot);
 
   await bot.api.setMyCommands([
     { command: 'start', description: 'Main menu' },
@@ -53,6 +55,7 @@ async function main() {
     { command: 'promo', description: 'Activate promo code' },
     { command: 'ref', description: 'Referral program' },
     { command: 'download', description: 'Download Poker Diary app' },
+    { command: 'support', description: 'Contact developer' },
   ]);
   await bot.api.setMyCommands([
     { command: 'start', description: 'Главное меню' },
@@ -63,6 +66,7 @@ async function main() {
     { command: 'promo', description: 'Активировать промокод' },
     { command: 'ref', description: 'Реферальная программа' },
     { command: 'download', description: 'Скачать приложение Poker Diary' },
+    { command: 'support', description: 'Связаться с разработчиком' },
   ], { language_code: 'ru' });
   console.log('✅ Commands registered');
 
