@@ -34,10 +34,14 @@ export default {
 
 async function ensureTables(env) {
   try {
-    await env.DB.prepare(`CREATE TABLE IF NOT EXISTS licenses (
+    const oldLicenses = await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='licenses'").first();
+    if (oldLicenses) {
+      await env.DB.prepare("DROP TABLE licenses").run();
+    }
+    await env.DB.prepare(`CREATE TABLE licenses (
       key TEXT PRIMARY KEY,
-      plan TEXT NOT NULL CHECK(plan IN ('monthly','yearly','lifetime')),
-      status TEXT NOT NULL DEFAULT 'active' CHECK(status IN ('active','revoked','expired')),
+      plan TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'active',
       expires_at TEXT NOT NULL,
       current_fingerprint TEXT,
       activated_at TEXT,
