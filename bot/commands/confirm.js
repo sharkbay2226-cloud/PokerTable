@@ -1,4 +1,4 @@
-import { confirmOrder, addLicense, row } from '../db.js';
+import { confirmOrder, addLicense, row, getDb } from '../db.js';
 import { createLicense } from '../worker.js';
 import { verifyTransaction } from '../trongrid.js';
 import { notifyAdmins } from '../notify.js';
@@ -7,6 +7,10 @@ import { awardReferral } from '../referralReward.js';
 const PLAN_NAMES = { monthly: 'Месячная', yearly: 'Годовая', lifetime: 'Бессрочная' };
 
 async function issueLicense(order, bot, ctx) {
+  const db = getDb();
+  if (order.license_key) {
+    db.run("DELETE FROM licenses WHERE key=?", [order.license_key]);
+  }
   const licenseKey = generateLicenseKey();
   const plan = order.plan;
   const expiresAt = plan === 'lifetime'
@@ -113,17 +117,17 @@ export function confirmCommand(bot) {
     }
 
     const confirmedOrder = row(
-      "SELECT * FROM orders WHERE id = ? AND user_id = ? AND status = 'confirmed' AND license_key IS NULL",
+      "SELECT * FROM orders WHERE id = ? AND user_id = ? AND status = 'confirmed'",
       { 0: orderId, 1: ctx.from.id }
     );
 
     if (confirmedOrder) {
-      await ctx.reply('🔄 Заказ уже подтверждён, создаю лицензию...');
+      await ctx.reply('🔄 Заказ уже подтверждён, создаю новую лицензию...');
       await issueLicense(confirmedOrder, bot, ctx);
       return;
     }
 
-    await ctx.reply('❌ Заказ не найден, уже обработан или лицензия уже выдана.');
+    await ctx.reply('❌ Заказ не найден.');
   });
 }
 

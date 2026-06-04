@@ -34,19 +34,36 @@ export default {
 
 async function ensureTables(env) {
   try {
-    const oldLicenses = await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='licenses'").first();
-    if (oldLicenses) {
-      await env.DB.prepare("DROP TABLE licenses").run();
+    // Recreate licenses table if it has wrong CHECK constraint (old schema)
+    const tableExists = await env.DB.prepare("SELECT name FROM sqlite_master WHERE type='table' AND name='licenses'").first();
+    if (tableExists) {
+      try {
+        await env.DB.prepare("INSERT INTO licenses (key,plan,status,expires_at) VALUES ('_test_','monthly','active','2099-01-01')").run();
+        await env.DB.prepare("DELETE FROM licenses WHERE key='_test_'").run();
+      } catch {
+        await env.DB.prepare("ALTER TABLE licenses RENAME TO licenses_old").run();
+        await env.DB.prepare("DROP TABLE IF EXISTS licenses_old").run();
+        await env.DB.prepare(`CREATE TABLE licenses (
+          key TEXT PRIMARY KEY,
+          plan TEXT NOT NULL,
+          status TEXT NOT NULL DEFAULT 'active',
+          expires_at TEXT NOT NULL,
+          current_fingerprint TEXT,
+          activated_at TEXT,
+          created_at TEXT DEFAULT (datetime('now'))
+        )`).run();
+      }
+    } else {
+      await env.DB.prepare(`CREATE TABLE licenses (
+        key TEXT PRIMARY KEY,
+        plan TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'active',
+        expires_at TEXT NOT NULL,
+        current_fingerprint TEXT,
+        activated_at TEXT,
+        created_at TEXT DEFAULT (datetime('now'))
+      )`).run();
     }
-    await env.DB.prepare(`CREATE TABLE licenses (
-      key TEXT PRIMARY KEY,
-      plan TEXT NOT NULL,
-      status TEXT NOT NULL DEFAULT 'active',
-      expires_at TEXT NOT NULL,
-      current_fingerprint TEXT,
-      activated_at TEXT,
-      created_at TEXT DEFAULT (datetime('now'))
-    )`).run();
     await env.DB.prepare(`CREATE TABLE IF NOT EXISTS activations (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
       license_key TEXT NOT NULL,
